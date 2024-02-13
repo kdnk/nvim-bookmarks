@@ -17,19 +17,32 @@ local list_find_index = function(list, target)
 	return nil
 end
 
-local goto_file_line = function(file_index, line_index)
-	local file = vim.fn["bm#all_files"]()[file_index]
+local get_file_index = function(file)
+	return list_find_index(vim.fn["bm#all_files"](), file)
+end
+
+local get_line_index = function(file, line)
+	list_find_index(vim.fn["bm#all_lines"](file), line)
+end
+
+local get_last_line_index = function(file_index)
+	return #vim.fn["bm#all_lines"](vim.fn["bm#all_files"]()[file_index])
+end
+
+local int_lines = function(file)
+	local lines = list_map(vim.fn["bm#all_lines"](file), function(line)
+		return tonumber(line)
+	end)
+	table.sort(lines)
+	return lines
+end
+
+local goto_file_line = function(file, line)
 	local bufnr = vim.fn.bufnr(file, true)
 	vim.api.nvim_set_current_buf(bufnr)
 
 	local win_id = vim.api.nvim_get_current_win()
 
-	local lines = list_map(vim.fn["bm#all_lines"](file), function(line)
-		return tonumber(line)
-	end)
-	table.sort(lines)
-
-	local line = lines[line_index]
 	vim.api.nvim_win_set_cursor(win_id, { line, 0 })
 end
 
@@ -49,9 +62,38 @@ function M.cycle_through(reverse)
 		return
 	end
 
-	local file = vim.fn["bm#all_files"]()[M.latest_file_index or 1]
-	local max_line_count = #vim.fn["bm#all_lines"](file)
+	-- inner file
+	local current_file = vim.api.nvim_buf_get_name(0)
+	local current_line = vim.api.nvim_win_get_cursor(0)[1]
+	if list_find_index(vim.fn["bm#all_files"](), current_file) ~= nil then
+		local lines = int_lines(current_file)
+		if reverse then
+			table.sort(lines, function(a, b)
+				return a > b
+			end)
+		end
+		for _, line in ipairs(lines) do
+			if not reverse then
+				if current_line < line then
+					M.latest_file_index = get_file_index(current_line)
+					M.latest_line_index = get_line_index(current_line, line)
+					goto_file_line(current_file, line)
+					return
+				end
+			else
+				if current_line > line then
+					M.latest_file_index = get_file_index(current_line)
+					M.latest_line_index = get_line_index(current_line, line)
+					goto_file_line(current_file, line)
+					return
+				end
+			end
+		end
+		M.latest_file_index = get_file_index(current_file)
+		M.latest_line_index = lines[#lines]
+	end
 
+	-- outer file
 	if M.latest_file_index == nil then
 		M.latest_file_index = 1
 	end
@@ -62,39 +104,26 @@ function M.cycle_through(reverse)
 
 	if not reverse then
 		if max_file_count <= M.latest_file_index then
-			if max_line_count <= M.latest_line_index then
-				M.latest_file_index = 1
-				M.latest_line_index = 1
-			else
-				M.latest_line_index = M.latest_line_index + 1
-			end
+			M.latest_file_index = 1
+			M.latest_line_index = 1
 		else
-			if max_line_count <= M.latest_line_index then
-				M.latest_file_index = M.latest_file_index + 1
-				M.latest_line_index = 1
-			else
-				M.latest_line_index = M.latest_line_index + 1
-			end
+			M.latest_file_index = M.latest_file_index + 1
+			M.latest_line_index = 1
 		end
 	else
 		if M.latest_file_index == 1 then
-			if M.latest_line_index == 1 then
-				M.latest_file_index = max_file_count
-				M.latest_line_index = #vim.fn["bm#all_lines"](vim.fn["bm#all_files"]()[M.latest_file_index])
-			else
-				M.latest_line_index = M.latest_line_index - 1
-			end
+			M.latest_file_index = max_file_count
+			M.latest_line_index = get_last_line_index(M.latest_file_index)
 		else
-			if M.latest_line_index == 1 then
-				M.latest_file_index = M.latest_file_index - 1
-				M.latest_line_index = #vim.fn["bm#all_lines"](vim.fn["bm#all_files"]()[M.latest_file_index])
-			else
-				M.latest_line_index = M.latest_line_index - 1
-			end
+			M.latest_file_index = M.latest_file_index - 1
+			M.latest_line_index = get_last_line_index(M.latest_file_index)
 		end
 	end
 
-	goto_file_line(M.latest_file_index, M.latest_line_index)
+	local next_file = vim.fn["bm#all_files"]()[M.latest_file_index]
+	local lines = int_lines(next_file)
+	local next_line = lines[M.latest_line_index]
+	goto_file_line(next_file, next_line)
 end
 
 return M
