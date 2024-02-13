@@ -33,7 +33,7 @@ local goto_file_line = function(file_index, line_index)
 	vim.api.nvim_win_set_cursor(win_id, { line, 0 })
 end
 
-function M.mark_toggle()
+function M.bookmark_toggle()
 	if not M.current_file_index then
 		M.current_file_index = list_find_index(vim.fn["bm#all_files"](), vim.api.nvim_buf_get_name(0))
 		M.current_line_index = vim.api.nvim_win_get_cursor(0)[1]

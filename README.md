@@ -16,7 +16,7 @@ This plugin adds a feature to move across buffers to [MattesGroeger/vim-bookmark
 ## Configuration
 
 ```lua
-vim.keymap.set("n", "mm", require("bookmarks-cycle-through").mark_toggle)
+vim.keymap.set("n", "mm", require("bookmarks-cycle-through").toggle_bookmark)
 vim.keymap.set("n", "]b", function()
     require("bookmarks-cycle-through").cycle_through(false)
 end)
