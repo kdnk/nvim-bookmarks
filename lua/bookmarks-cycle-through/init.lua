@@ -34,9 +34,9 @@ local goto_file_line = function(file_index, line_index)
 end
 
 function M.bookmark_toggle()
-	if not M.current_file_index then
-		M.current_file_index = list_find_index(vim.fn["bm#all_files"](), vim.api.nvim_buf_get_name(0))
-		M.current_line_index = vim.api.nvim_win_get_cursor(0)[1]
+	if not M.latest_file_index then
+		M.latest_file_index = list_find_index(vim.fn["bm#all_files"](), vim.api.nvim_buf_get_name(0))
+		M.latest_line_index = vim.api.nvim_win_get_cursor(0)[1]
 	end
 	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Plug>BookmarkToggle", true, true, true), "n", true)
 end
@@ -49,52 +49,52 @@ function M.cycle_through(reverse)
 		return
 	end
 
-	local file = vim.fn["bm#all_files"]()[M.current_file_index or 1]
+	local file = vim.fn["bm#all_files"]()[M.latest_file_index or 1]
 	local max_line_count = #vim.fn["bm#all_lines"](file)
 
-	if M.current_file_index == nil then
-		M.current_file_index = 1
+	if M.latest_file_index == nil then
+		M.latest_file_index = 1
 	end
 
-	if M.current_line_index == nil then
-		M.current_line_index = 1
+	if M.latest_line_index == nil then
+		M.latest_line_index = 1
 	end
 
 	if not reverse then
-		if max_file_count <= M.current_file_index then
-			if max_line_count <= M.current_line_index then
-				M.current_file_index = 1
-				M.current_line_index = 1
+		if max_file_count <= M.latest_file_index then
+			if max_line_count <= M.latest_line_index then
+				M.latest_file_index = 1
+				M.latest_line_index = 1
 			else
-				M.current_line_index = M.current_line_index + 1
+				M.latest_line_index = M.latest_line_index + 1
 			end
 		else
-			if max_line_count <= M.current_line_index then
-				M.current_file_index = M.current_file_index + 1
-				M.current_line_index = 1
+			if max_line_count <= M.latest_line_index then
+				M.latest_file_index = M.latest_file_index + 1
+				M.latest_line_index = 1
 			else
-				M.current_line_index = M.current_line_index + 1
+				M.latest_line_index = M.latest_line_index + 1
 			end
 		end
 	else
-		if M.current_file_index == 1 then
-			if M.current_line_index == 1 then
-				M.current_file_index = max_file_count
-				M.current_line_index = #vim.fn["bm#all_lines"](vim.fn["bm#all_files"]()[M.current_file_index])
+		if M.latest_file_index == 1 then
+			if M.latest_line_index == 1 then
+				M.latest_file_index = max_file_count
+				M.latest_line_index = #vim.fn["bm#all_lines"](vim.fn["bm#all_files"]()[M.latest_file_index])
 			else
-				M.current_line_index = M.current_line_index - 1
+				M.latest_line_index = M.latest_line_index - 1
 			end
 		else
-			if M.current_line_index == 1 then
-				M.current_file_index = M.current_file_index - 1
-				M.current_line_index = #vim.fn["bm#all_lines"](vim.fn["bm#all_files"]()[M.current_file_index])
+			if M.latest_line_index == 1 then
+				M.latest_file_index = M.latest_file_index - 1
+				M.latest_line_index = #vim.fn["bm#all_lines"](vim.fn["bm#all_files"]()[M.latest_file_index])
 			else
-				M.current_line_index = M.current_line_index - 1
+				M.latest_line_index = M.latest_line_index - 1
 			end
 		end
 	end
 
-	goto_file_line(M.current_file_index, M.current_line_index)
+	goto_file_line(M.latest_file_index, M.latest_line_index)
 end
 
 return M
