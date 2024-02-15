@@ -46,6 +46,14 @@ local goto_file_line = function(file, line)
 	vim.api.nvim_win_set_cursor(win_id, { line, 0 })
 end
 
+function M.bookmark_count()
+	local count = 0
+	for _, file in ipairs(vim.fn["bm#all_files"]()) do
+		count = count + #vim.fn["bm#all_lines"](file)
+	end
+	return count
+end
+
 function M.bookmark_toggle()
 	if not M.latest_file_index then
 		M.latest_file_index = list_find_index(vim.fn["bm#all_files"](), vim.api.nvim_buf_get_name(0))
