@@ -24,3 +24,21 @@ vim.keymap.set("n", "[b", function()
     require("bookmarks-cycle-through").cycle_through(true)
 end)
 ```
+
+## Integration
+
+### lualine
+
+```lua
+local function bookmark_count()
+    return string.format([[📘 %s]], require("bookmarks-cycle-through").bookmark_count())
+
+    require("lualine").setup({
+        sections = {
+            lualine_c = {
+                { bookmark_count },
+            },
+        },
+    })
+end
+```
