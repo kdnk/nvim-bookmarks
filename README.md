@@ -31,7 +31,7 @@ end)
 
 ```lua
 local function bookmark_count()
-    return string.format([[📘 %s]], require("bookmarks-cycle-through").bookmark_count())
+    return string.format([[📘 %s]], require("bookmarks-cycle-through").bookmark_count_or_index())
 
     require("lualine").setup({
         sections = {

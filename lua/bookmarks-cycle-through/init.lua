@@ -17,24 +17,27 @@ local list_find_index = function(list, target)
 	return nil
 end
 
-local get_file_index = function(file)
-	return list_find_index(vim.fn["bm#all_files"](), file)
-end
-
-local get_line_index = function(file, line)
-	list_find_index(vim.fn["bm#all_lines"](file), line)
-end
-
-local get_last_line_index = function(file_index)
-	return #vim.fn["bm#all_lines"](vim.fn["bm#all_files"]()[file_index])
-end
-
 local int_lines = function(file)
 	local lines = list_map(vim.fn["bm#all_lines"](file), function(line)
 		return tonumber(line)
 	end)
 	table.sort(lines)
 	return lines
+end
+
+local get_file_index = function(file)
+	return list_find_index(vim.fn["bm#all_files"](), file)
+end
+
+local get_line_index = function(file, line)
+  local lines = vim.fn["bm#all_lines"](file)
+  table.sort(lines)
+  local lines = int_lines(file)
+	return list_find_index(lines, line)
+end
+
+local get_last_line_index = function(file_index)
+	return #vim.fn["bm#all_lines"](vim.fn["bm#all_files"]()[file_index])
 end
 
 local goto_file_line = function(file, line)
@@ -46,12 +49,38 @@ local goto_file_line = function(file, line)
 	vim.api.nvim_win_set_cursor(win_id, { line, 0 })
 end
 
-function M.bookmark_count()
-	local count = 0
+function M.bookmark_count_or_index()
+  local bookmarks = {}
 	for _, file in ipairs(vim.fn["bm#all_files"]()) do
-		count = count + #vim.fn["bm#all_lines"](file)
+    local lines = vim.fn["bm#all_lines"](file)
+    table.sort(lines)
+    for _, line in ipairs(lines) do
+      table.insert(bookmarks, file .. ":" .. line)
+    end
 	end
-	return count
+
+  if (not M.latest_file_index) or (not M.latest_line_index) then
+    return #bookmarks
+  end
+
+  local current_file = vim.fn["bm#all_files"]()[M.latest_file_index]
+
+  lines = int_lines(current_file)
+  table.sort(lines)
+
+  if M.latest_line_index > #lines then
+    return #bookmarks
+  end
+
+  if #lines == 0 then
+    return #bookmarks
+  end
+
+
+  local current_line = lines[M.latest_line_index]
+  local current_bookmark = current_file .. ":" .. current_line
+  local current_bookmark_index = list_find_index(bookmarks, current_bookmark)
+  return current_bookmark_index .. "/" .. #bookmarks
 end
 
 function M.bookmark_toggle()
@@ -83,15 +112,16 @@ function M.cycle_through(reverse)
 		for _, line in ipairs(lines) do
 			if not reverse then
 				if current_line < line then
-					M.latest_file_index = get_file_index(current_line)
-					M.latest_line_index = get_line_index(current_line, line)
+					M.latest_file_index = get_file_index(current_file)
+          M.latest_line_index = get_line_index(current_file, line)
+
 					goto_file_line(current_file, line)
 					return
 				end
 			else
 				if current_line > line then
-					M.latest_file_index = get_file_index(current_line)
-					M.latest_line_index = get_line_index(current_line, line)
+					M.latest_file_index = get_file_index(current_file)
+					M.latest_line_index = get_line_index(current_file, line)
 					goto_file_line(current_file, line)
 					return
 				end
