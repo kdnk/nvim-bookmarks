@@ -30,13 +30,13 @@ end)
 ### lualine
 
 ```lua
-local function bookmark_count()
+local function bookmark_count_or_index()
     return string.format([[📘 %s]], require("bookmarks-cycle-through").bookmark_count_or_index())
 
     require("lualine").setup({
         sections = {
             lualine_c = {
-                { bookmark_count },
+                { bookmark_count_or_index },
             },
         },
     })
