@@ -32,7 +32,7 @@ end
 local get_line_index = function(file, line)
 	local lines = vim.fn["bm#all_lines"](file)
 	table.sort(lines)
-	local lines = int_lines(file)
+	lines = int_lines(file)
 	return list_find_index(lines, line)
 end
 
@@ -65,7 +65,7 @@ function M.bookmark_count_or_index()
 
 	local current_file = vim.fn["bm#all_files"]()[M.latest_file_index]
 
-	lines = int_lines(current_file)
+	local lines = int_lines(current_file)
 	table.sort(lines)
 
 	if M.latest_line_index > #lines then
