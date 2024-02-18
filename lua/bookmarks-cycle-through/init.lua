@@ -95,7 +95,7 @@ function M.cycle_through(opts)
 	local max_file_count = #vim.fn["bm#all_files"]()
 
 	if max_file_count == 0 then
-		print("No bookmark")
+		-- no bookmarks
 		return
 	end
 
