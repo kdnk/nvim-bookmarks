@@ -91,7 +91,8 @@ function M.bookmark_toggle()
 	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Plug>BookmarkToggle", true, true, true), "n", true)
 end
 
-function M.cycle_through(reverse)
+function M.cycle_through(opts)
+  local reverse = opts.reverse
 	local max_file_count = #vim.fn["bm#all_files"]()
 
 	if max_file_count == 0 then
