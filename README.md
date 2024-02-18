@@ -4,7 +4,9 @@ This plugin adds a feature to move across buffers to [MattesGroeger/vim-bookmark
 
 ## Installation
 
-```
+### lazy.nvim
+
+```lua
 {
   "kdnk/bookmarks-cycle-through.nvim",
   dependencies = {
