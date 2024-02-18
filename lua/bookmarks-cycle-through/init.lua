@@ -30,9 +30,9 @@ local get_file_index = function(file)
 end
 
 local get_line_index = function(file, line)
-  local lines = vim.fn["bm#all_lines"](file)
-  table.sort(lines)
-  local lines = int_lines(file)
+	local lines = vim.fn["bm#all_lines"](file)
+	table.sort(lines)
+	local lines = int_lines(file)
 	return list_find_index(lines, line)
 end
 
@@ -50,37 +50,36 @@ local goto_file_line = function(file, line)
 end
 
 function M.bookmark_count_or_index()
-  local bookmarks = {}
+	local bookmarks = {}
 	for _, file in ipairs(vim.fn["bm#all_files"]()) do
-    local lines = vim.fn["bm#all_lines"](file)
-    table.sort(lines)
-    for _, line in ipairs(lines) do
-      table.insert(bookmarks, file .. ":" .. line)
-    end
+		local lines = vim.fn["bm#all_lines"](file)
+		table.sort(lines)
+		for _, line in ipairs(lines) do
+			table.insert(bookmarks, file .. ":" .. line)
+		end
 	end
 
-  if (not M.latest_file_index) or (not M.latest_line_index) then
-    return #bookmarks
-  end
+	if (not M.latest_file_index) or not M.latest_line_index then
+		return #bookmarks
+	end
 
-  local current_file = vim.fn["bm#all_files"]()[M.latest_file_index]
+	local current_file = vim.fn["bm#all_files"]()[M.latest_file_index]
 
-  lines = int_lines(current_file)
-  table.sort(lines)
+	lines = int_lines(current_file)
+	table.sort(lines)
 
-  if M.latest_line_index > #lines then
-    return #bookmarks
-  end
+	if M.latest_line_index > #lines then
+		return #bookmarks
+	end
 
-  if #lines == 0 then
-    return #bookmarks
-  end
+	if #lines == 0 then
+		return #bookmarks
+	end
 
-
-  local current_line = lines[M.latest_line_index]
-  local current_bookmark = current_file .. ":" .. current_line
-  local current_bookmark_index = list_find_index(bookmarks, current_bookmark)
-  return current_bookmark_index .. "/" .. #bookmarks
+	local current_line = lines[M.latest_line_index]
+	local current_bookmark = current_file .. ":" .. current_line
+	local current_bookmark_index = list_find_index(bookmarks, current_bookmark)
+	return current_bookmark_index .. "/" .. #bookmarks
 end
 
 function M.bookmark_toggle()
@@ -92,7 +91,7 @@ function M.bookmark_toggle()
 end
 
 function M.cycle_through(opts)
-  local reverse = opts.reverse
+	local reverse = opts.reverse
 	local max_file_count = #vim.fn["bm#all_files"]()
 
 	if max_file_count == 0 then
@@ -114,7 +113,7 @@ function M.cycle_through(opts)
 			if not reverse then
 				if current_line < line then
 					M.latest_file_index = get_file_index(current_file)
-          M.latest_line_index = get_line_index(current_file, line)
+					M.latest_line_index = get_line_index(current_file, line)
 
 					goto_file_line(current_file, line)
 					return
