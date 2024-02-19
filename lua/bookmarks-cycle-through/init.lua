@@ -30,14 +30,15 @@ local get_file_index = function(file)
 end
 
 local get_line_index = function(file, line)
-	local lines = vim.fn["bm#all_lines"](file)
+	local lines = int_lines(file)
 	table.sort(lines)
 	lines = int_lines(file)
 	return list_find_index(lines, line)
 end
 
 local get_last_line_index = function(file_index)
-	return #vim.fn["bm#all_lines"](vim.fn["bm#all_files"]()[file_index])
+  local file = vim.fn["bm#all_files"]()[file_index]
+	return #int_lines(file)
 end
 
 local goto_file_line = function(file, line)
@@ -52,7 +53,7 @@ end
 function M.bookmark_count_or_index()
 	local bookmarks = {}
 	for _, file in ipairs(vim.fn["bm#all_files"]()) do
-		local lines = vim.fn["bm#all_lines"](file)
+		local lines = int_lines(file)
 		table.sort(lines)
 		for _, line in ipairs(lines) do
 			table.insert(bookmarks, file .. ":" .. line)
