@@ -14,8 +14,8 @@
 
 ```lua
 vim.keymap.set("n", "mm", require("bookmarks").toggle)
-vim.keymap.set("n", "<C-,>", require("bookmarks").move_prev)
-vim.keymap.set("n", "<C-.>", require("bookmarks").move_next)
+vim.keymap.set("n", "<C-,>", require("bookmarks").jump_prev)
+vim.keymap.set("n", "<C-.>", require("bookmarks").jump_next)
 vim.keymap.set("n", "mx", require("bookmarks").reset)
 ```
 

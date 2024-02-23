@@ -1,6 +1,6 @@
 local bookmark = require("bookmarks.bookmark")
 local sign = require("bookmarks.sign")
-local move = require("bookmarks.move")
+local jump = require("bookmarks.jump")
 local sync = require("bookmarks.sync")
 
 local M = {}
@@ -8,7 +8,7 @@ local M = {}
 function M.reset()
     bookmark.remove_all_bookmarks()
     sign.remove_all_signs()
-    move.reset_index()
+    jump.reset_index()
 end
 
 function M.toggle()
@@ -22,12 +22,12 @@ function M.toggle()
     end
 end
 
-function M.move_next()
-    move.move_next()
+function M.jump_next()
+    jump.jump({ reverse = false })
 end
 
-function M.move_prev()
-    move.move_prev()
+function M.jump_prev()
+    jump.jump({ reverse = true })
 end
 
 return M

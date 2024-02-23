@@ -47,13 +47,12 @@ local function normalize_bookmark(opts)
     end
 end
 
----@param i integer
 ---@param opts { reverse: boolean }
 ---@return nil
-local function move_cursor(i, opts)
-    i = normalize_bookmark(opts)
+local function jump_cursor(opts)
+    index = normalize_bookmark(opts)
     local bookmarks = bookmark.get_bookmarks()
-    local b = bookmarks[i]
+    local b = bookmarks[index]
     vim.api.nvim_set_current_buf(b.bufnr)
     local win_id = vim.api.nvim_get_current_win()
     vim.api.nvim_win_set_cursor(win_id, { b.lnum, 0 })
@@ -77,53 +76,37 @@ end
 
 ---@param opts { reverse: boolean }
 ---@return boolean
-local function move_line_within_file(opts)
+local function jump_line_within_file(opts)
     local current_filename = vim.api.nvim_buf_get_name(0)
     local current_lnum = vim.api.nvim_win_get_cursor(0)[1]
 
     local neighbors = get_neighboring_bookmarks(current_filename, current_lnum)
     if not opts.reverse and 0 < neighbors.bigger_index then
         index = neighbors.bigger_index
-        move_cursor(index, opts)
+        jump_cursor(index, opts)
         return true
     elseif opts.reverse and 0 < neighbors.smaller_index then
         index = neighbors.smaller_index
-        move_cursor(index, opts)
+        jump_cursor(index, opts)
         return true
     end
     return false
 end
 
-function M.move_prev()
+---@param opts { reverse: boolean }
+function M.jump(opts)
     local bookmarks = bookmark.get_bookmarks()
     if #bookmarks == 0 then
         return
     end
 
-    local opts = { reverse = true }
-    local moved = move_line_within_file(opts)
-    if moved then
+    local jumped = jump_line_within_file(opts)
+    if jumped then
         return
     end
 
     move_index(opts)
-    move_cursor(index, opts)
-end
-
-function M.move_next()
-    local bookmarks = bookmark.get_bookmarks()
-    if #bookmarks == 0 then
-        return
-    end
-
-    local opts = { reverse = false }
-    local moved = move_line_within_file(opts)
-    if moved then
-        return
-    end
-
-    move_index(opts)
-    move_cursor(index, opts)
+    jump_cursor(opts)
 end
 
 function M.reset_index()
