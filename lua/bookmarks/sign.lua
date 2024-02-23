@@ -1,5 +1,4 @@
 local core = require("bookmarks.core")
-local bookmark = require("bookmarks.bookmark")
 
 local M = {}
 

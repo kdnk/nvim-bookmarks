@@ -7,8 +7,8 @@ local M = {}
 
 function M.reset()
     bookmark.remove_all_bookmarks()
-    move.reset_index()
     sign.remove_all_signs()
+    move.reset_index()
 end
 
 function M.toggle()
