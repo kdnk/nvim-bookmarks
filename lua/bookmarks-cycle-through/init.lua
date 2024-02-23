@@ -1,3 +1,7 @@
+local bookmark = require("bookmarks-cycle-through.bookmark")
+local sign = require("bookmarks-cycle-through.sign")
+local move = require("bookmarks-cycle-through.move")
+
 local M = {}
 
 local list_map = function(list, map)
@@ -165,11 +169,14 @@ function M.cycle_through(opts)
     goto_file_line(next_file, next_line)
 end
 
+function M.reset()
+    bookmark.remove_all_bookmarks()
+    move.reset_index()
+    sign.remove_all_signs()
+end
+
+function M.toggle()
+    sign.toggle()
+end
+
 return M
-
-
-
-
-
-
-

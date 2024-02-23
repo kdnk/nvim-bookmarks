@@ -2,10 +2,10 @@ local core = require("bookmarks-cycle-through.core")
 local bookmark = require("bookmarks-cycle-through.bookmark")
 local M = {}
 
-M.index = 1
+local index = 1
 
-local function move_cursor(index)
-    local b = bookmark.get_bookmarks()[index]
+local function move_cursor(i)
+    local b = bookmark.get_bookmarks()[i]
     local bufnr = vim.fn.bufnr(b.filename, true)
     vim.api.nvim_set_current_buf(bufnr)
 
@@ -16,17 +16,17 @@ end
 
 local function increase_index()
     local bookmarks = bookmark.get_bookmarks()
-    M.index = M.index + 1
-    if M.index > #bookmarks then
-        M.index = 1
+    index = index + 1
+    if index > #bookmarks then
+        index = 1
     end
 end
 
 local function decrease_index()
     local bookmarks = bookmark.get_bookmarks()
-    M.index = M.index - 1
-    if M.index <= 0 then
-        M.index = #bookmarks
+    index = index - 1
+    if index <= 0 then
+        index = #bookmarks
     end
 end
 
@@ -62,12 +62,12 @@ local function move_line_within_file(opts)
 
     local neighbors = get_neighboring_bookmarks(current_filename, current_lnum)
     if not opts.reverse and 0 < neighbors.bigger_index then
-        M.index = neighbors.bigger_index
-        move_cursor(M.index)
+        index = neighbors.bigger_index
+        move_cursor(index)
         return true
     elseif opts.reverse and 0 < neighbors.smaller_index then
-        M.index = neighbors.smaller_index
-        move_cursor(M.index)
+        index = neighbors.smaller_index
+        move_cursor(index)
         return true
     end
     return false
@@ -80,7 +80,7 @@ function M.move_prev()
     end
     decrease_index()
 
-    move_cursor(M.index)
+    move_cursor(index)
 end
 
 function M.move_next()
@@ -90,7 +90,11 @@ function M.move_next()
     end
     increase_index()
 
-    move_cursor(M.index)
+    move_cursor(index)
+end
+
+function M.reset_index()
+    index = 1
 end
 
 return M

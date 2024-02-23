@@ -56,4 +56,8 @@ function M.delete_bookmark(bufnr, lnum)
     M.get_bookmarks()
 end
 
+function M.remove_all_bookmarks()
+    bookmarks = {}
+end
+
 return M

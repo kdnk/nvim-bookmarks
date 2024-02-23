@@ -54,4 +54,8 @@ function M.toggle()
     end
 end
 
+function M.remove_all_signs()
+    vim.fn.sign_unplace(vim.g.bookmark_sign_group)
+end
+
 return M
