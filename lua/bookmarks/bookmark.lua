@@ -9,8 +9,18 @@ local M = {}
 ---@type Bookmark[]
 local bookmarks = {}
 
+local function update_bufnr()
+    core.list.each(bookmarks, function(bookmark)
+        local bufnr = vim.fn.bufadd(bookmark.filename)
+        vim.fn.bufload(bufnr)
+        bookmark.bufnr = bufnr
+    end)
+end
+
 ---@return Bookmark[]
 function M.get_bookmarks()
+    update_bufnr()
+
     local filenames = core.list.uniq(core.list.map(bookmarks, function(bookmark)
         return bookmark.filename
     end))
@@ -62,6 +72,7 @@ function M.remove_all_bookmarks()
 end
 
 function M.serialize()
+    update_bufnr()
     return { vim.json.encode(M.get_bookmarks()) }
 end
 

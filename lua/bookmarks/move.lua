@@ -29,6 +29,7 @@ end
 local function normalize_bookmark(opts)
     local bookmarks = bookmark.get_bookmarks()
     local b = bookmarks[index]
+
     local max_lnum = vim.api.nvim_buf_line_count(b.bufnr)
     if max_lnum < b.lnum then
         sync.delete(b.bufnr, b.lnum)
@@ -106,7 +107,6 @@ function M.move_prev()
     end
 
     move_index(opts)
-    normalize_bookmark(opts)
     move_cursor(index, opts)
 end
 
@@ -123,7 +123,6 @@ function M.move_next()
     end
 
     move_index(opts)
-    normalize_bookmark(opts)
     move_cursor(index, opts)
 end
 
