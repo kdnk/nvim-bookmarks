@@ -25,6 +25,13 @@ local int_lines = function(file)
     return lines
 end
 
+vim.fn.sign_define("Bookmark")
+function M.sign()
+    local line = vim.api.nvim_win_get_cursor(0)[1]
+    local filename = vim.api.nvim_get_current_buf()
+    vim.fn.sign_place(0, "", "Bookmark", filename, { lnum = line })
+end
+
 local get_file_index = function(file)
     return list_find_index(vim.fn["bm#all_files"](), file)
 end
