@@ -26,6 +26,13 @@ end
 
 ---@param bufnr integer
 ---@param lnum number
+function M.add(bufnr, lnum)
+    sign.add_sign(bufnr, lnum)
+    bookmark.add_bookmark(bufnr, lnum)
+end
+
+---@param bufnr integer
+---@param lnum number
 function M.delete(bufnr, lnum)
     sign.delete_sign(bufnr, lnum)
     bookmark.delete_bookmark(bufnr, lnum)
