@@ -6,16 +6,8 @@ local M = {}
 
 local index = 1
 
-local function move_cursor(i)
-    local bookmarks = bookmark.get_bookmarks()
-    local b = bookmarks[i]
-
-    vim.api.nvim_set_current_buf(b.bufnr)
-    local win_id = vim.api.nvim_get_current_win()
-    vim.api.nvim_win_set_cursor(win_id, { b.lnum, 0 })
-end
-
 ---@param opts { reverse: boolean }
+---@return integer
 local function move_index(opts)
     local bookmarks = bookmark.get_bookmarks()
     if not opts.reverse then
@@ -29,6 +21,39 @@ local function move_index(opts)
             index = #bookmarks
         end
     end
+    return index
+end
+
+---@param opts { reverse: boolean }
+local function normalize_bookmark(opts)
+    local bookmarks = bookmark.get_bookmarks()
+    local b = bookmarks[index]
+    local max_lnum = vim.api.nvim_buf_line_count(b.bufnr)
+    if max_lnum < b.lnum then
+        sync.delete(b.bufnr, b.lnum)
+        sync.sync_bookmarks_to_signs()
+
+        bookmarks = bookmark.get_bookmarks()
+        if not opts.reverse then
+            index = #bookmarks < index and #bookmarks or index
+            return index
+        else
+            return move_index(opts)
+        end
+    else
+        return index
+    end
+end
+
+---@param i integer
+---@param opts { reverse: boolean }
+local function move_cursor(i, opts)
+    i = normalize_bookmark(opts)
+    local bookmarks = bookmark.get_bookmarks()
+    local b = bookmarks[i]
+    vim.api.nvim_set_current_buf(b.bufnr)
+    local win_id = vim.api.nvim_get_current_win()
+    vim.api.nvim_win_set_cursor(win_id, { b.lnum, 0 })
 end
 
 ---@param filename string
@@ -54,31 +79,14 @@ local function move_line_within_file(opts)
     local neighbors = get_neighboring_bookmarks(current_filename, current_lnum)
     if not opts.reverse and 0 < neighbors.bigger_index then
         index = neighbors.bigger_index
-        move_cursor(index)
+        move_cursor(index, opts)
         return true
     elseif opts.reverse and 0 < neighbors.smaller_index then
         index = neighbors.smaller_index
-        move_cursor(index)
+        move_cursor(index, opts)
         return true
     end
     return false
-end
-
----@param opts { reverse: boolean }
-local function normalize_bookmarks(opts)
-    local bookmarks = bookmark.get_bookmarks()
-    local b = bookmarks[index]
-    local max_lnum = vim.api.nvim_buf_line_count(b.bufnr)
-    if max_lnum < b.lnum then
-        sync.delete(b.bufnr, b.lnum)
-        sync.sync_bookmarks_to_signs()
-
-        if not opts.reverse then
-            index = #bookmarks < index and #bookmarks or index
-        else
-            move_index(opts)
-        end
-    end
 end
 
 function M.move_prev()
@@ -86,14 +94,16 @@ function M.move_prev()
     if #bookmarks == 0 then
         return
     end
-    normalize_bookmarks({ reverse = true })
-    local moved = move_line_within_file({ reverse = true })
+
+    local opts = { reverse = true }
+    local moved = move_line_within_file(opts)
     if moved then
         return
     end
 
-    move_index({ reverse = true })
-    move_cursor(index)
+    move_index(opts)
+    normalize_bookmark(opts)
+    move_cursor(index, opts)
 end
 
 function M.move_next()
@@ -101,14 +111,16 @@ function M.move_next()
     if #bookmarks == 0 then
         return
     end
-    normalize_bookmarks({ reverse = false })
-    local moved = move_line_within_file({ reverse = false })
+
+    local opts = { reverse = false }
+    local moved = move_line_within_file(opts)
     if moved then
         return
     end
 
-    move_index({ reverse = false })
-    move_cursor(index)
+    move_index(opts)
+    normalize_bookmark(opts)
+    move_cursor(index, opts)
 end
 
 function M.reset_index()

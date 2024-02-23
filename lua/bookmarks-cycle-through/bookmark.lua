@@ -33,6 +33,10 @@ function M.get_bookmarks()
     return new_bookmarks
 end
 
+function M.update_bookmarks(bs)
+    bookmarks = bs
+end
+
 ---@param bufnr integer
 ---@param lnum number
 ---@return nil
@@ -58,6 +62,18 @@ end
 
 function M.remove_all_bookmarks()
     bookmarks = {}
+end
+
+function M.serialize()
+    return { vim.json.encode(M.get_bookmarks()) }
+end
+
+function M.deserialize()
+    local json = vim.fn.readfile(vim.g.bookmark_serialize_path)
+    if json == nil then
+        return
+    end
+    return vim.json.decode(json[1]) or {}
 end
 
 return M
