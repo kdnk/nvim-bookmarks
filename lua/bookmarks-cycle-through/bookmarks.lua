@@ -9,25 +9,28 @@ local M = {}
 ---@type Bookmark[]
 local bookmarks = {}
 
----@alias BookmarkByFile table<string, Bookmark[]>
----@return BookmarkByFile
-function M.retrieve_bookmarks()
-    ---@type BookmarkByFile
-    local bookmarks_by_file = {}
+---@return Bookmark[]
+function M.get_bookmarks()
+    local filenames = core.list.uniq(core.list.map(bookmarks, function(bookmark)
+        return bookmark.filename
+    end))
 
-    core.list.each(bookmarks, function(bookmark)
-        if core.table.is_empty(bookmarks_by_file[bookmark.filename] or {}) then
-            bookmarks_by_file[bookmark.filename] = { bookmark }
-        else
-            table.insert(bookmarks_by_file[bookmark.filename], bookmark)
-        end
-    end)
-    core.table.each(bookmarks_by_file, function(filename, bs)
-        bookmarks_by_file[filename] = core.list.sort(bs, function(prev, next)
-            return prev.lnum > next.lnum
+    local new_bookmarks = {}
+    core.list.each(filenames, function(filename)
+        local bs = core.list.sort(
+            core.list.filter(bookmarks, function(bookmark)
+                return bookmark.filename == filename
+            end),
+            function(prev, next)
+                return prev.lnum > next.lnum
+            end
+        )
+        core.list.each(bs, function(bookmark)
+            table.insert(new_bookmarks, bookmark)
         end)
     end)
-    return bookmarks_by_file
+
+    return new_bookmarks
 end
 
 ---@param bufnr integer
@@ -37,7 +40,7 @@ function M.add_bookmark(bufnr, lnum)
     local filename = vim.api.nvim_buf_get_name(bufnr)
     table.insert(bookmarks, { filename = filename, bufnr = bufnr, lnum = lnum })
 
-    M.retrieve_bookmarks()
+    M.get_bookmarks()
 end
 
 ---@param bufnr integer
@@ -50,5 +53,7 @@ function M.delete_bookmark(bufnr, lnum)
             table.remove(bookmarks, index)
         end
     end)
-    M.retrieve_bookmarks()
+    M.get_bookmarks()
 end
+
+return M

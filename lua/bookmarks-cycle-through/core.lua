@@ -23,9 +23,10 @@ local string_split = function(str, sep)
 end
 
 --- map list
----@param list any[]
----@param map fun(v: any, i: number): any
----@return any[]
+---@generic T : any
+---@param list T[]
+---@param map fun(v: T, i: number): any
+---@return T[]
 local list_map = function(list, map)
     local new_list = {}
     for index, value in ipairs(list) do
@@ -116,6 +117,21 @@ local list_each = function(list, cb)
     for i, v in ipairs(list) do
         cb(v, i)
     end
+end
+
+---@generic T : any
+---@param list T[]
+local list_uniq = function(list)
+    print("[core.lua:125] list: " .. vim.inspect(list))
+    local new_list = {}
+    for _, v in ipairs(list) do
+        if list_find(new_list, function(value)
+            return value == v
+        end) == nil then
+            table.insert(new_list, v)
+        end
+    end
+    return new_list
 end
 
 --- merge list, list2 will overwrite list1
@@ -240,6 +256,7 @@ return {
         find = list_find,
         sort = list_sort,
         each = list_each,
+        uniq = list_uniq,
     },
     table = {
         clone = table_clone,
