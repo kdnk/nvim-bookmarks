@@ -2,16 +2,23 @@ local M = {}
 
 local core = require("bookmarks-cycle-through.core")
 
+---@param bufnr integer
+---@param lnum number
+---@return boolean
 local function has_signs(bufnr, lnum)
     local signs = vim.fn.sign_getplaced(bufnr, { group = vim.g.bookmark_sign_group, lnum = lnum })[1]["signs"]
 
     return core.list.includes(signs, function(sign)
+        print("sign: " .. vim.inspect(sign))
         return sign.lnum == lnum
     end)
 end
 
+---@param bufnr integer
+---@param lnum number
+---@return Sign[]
 local function get_signs(bufnr, lnum)
-    local signs = vim.fn.sign_getplaced(bufnr, { group = vim.g.bookmark_sign_group, lnum = lnum })[1]["signs"]
+    local signs = vim.fn.sign_getplaced(bufnr, { group = vim.g.bookmark_sign_group, lnum = lnum })[1]["signs"] --[[@as Sign]]
 
     return core.list.filter(signs, function(sign)
         return sign.lnum == lnum

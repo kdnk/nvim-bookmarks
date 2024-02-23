@@ -81,9 +81,10 @@ local list_includes = function(list, is_target)
 end
 
 --- find item in list
----@param list any[]
----@param is_target fun(v: any, i:number): boolean
----@return any | nil
+---@generic T : any
+---@param list T[]
+---@param is_target fun(v: T, i:number): boolean
+---@return T | nil
 local list_find = function(list, is_target)
     for index, value in ipairs(list) do
         if is_target(value, index) then
@@ -106,8 +107,9 @@ local list_reduce = function(list, cb, initial_res)
 end
 
 --- list for each
----@param list any[]
----@param cb fun(v: any, i: number): nil
+---@generic T : any
+---@param list T[]
+---@param cb fun(v: T, i: number): nil
 local list_each = function(list, cb)
     for i, v in ipairs(list) do
         cb(v, i)
