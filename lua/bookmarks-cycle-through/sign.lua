@@ -25,19 +25,31 @@ local function get_signs(bufnr, lnum)
     end)
 end
 
+---@param bufnr integer
+---@param lnum number
+local function add_sign(bufnr, lnum)
+    local sign_id = 0
+    vim.fn.sign_place(sign_id, vim.g.bookmark_sign_group, vim.g.bookmark_sign_name, bufnr, { lnum = lnum })
+end
+
+---@param bufnr integer
+---@param sign_id integer
+local function delete_sign(bufnr, sign_id)
+    vim.fn.sign_unplace(vim.g.bookmark_sign_group, { buffer = bufnr, id = sign_id })
+end
+
 function M.toggle()
     local lnum = vim.api.nvim_win_get_cursor(0)[1]
     local bufnr = vim.api.nvim_get_current_buf()
-    local sign_id = 0
 
     if has_signs(bufnr, lnum) then
         local signs = get_signs(bufnr, lnum)
         core.list.each(signs, function(sign)
-            vim.fn.sign_unplace(vim.g.bookmark_sign_group, { buffer = bufnr, id = sign.id })
+            delete_sign(bufnr, sign.id)
             bookmark.delete_bookmark(bufnr, lnum)
         end)
     else
-        vim.fn.sign_place(sign_id, vim.g.bookmark_sign_group, vim.g.bookmark_sign_name, bufnr, { lnum = lnum })
+        add_sign(bufnr, lnum)
         bookmark.add_bookmark(bufnr, lnum)
     end
 end
