@@ -5,18 +5,38 @@
 ### lazy.nvim
 
 ```lua
-{
-  "kdnk/bookmarks.lua",
+return {
+    "kdnk/bookmarks.lua",
+    config = function()
+        require("bookmarks").setup({
+            persist = true,
+            serialize_path = "./.Bookmarks.json",
+            sign = {
+                group = "Bookmark",
+                name = "Bookmark",
+            },
+        })
+
+        vim.keymap.set("n", "mm", require("bookmarks").toggle)
+        vim.keymap.set("n", "<C-,>", require("bookmarks").jump_prev)
+        vim.keymap.set("n", "<C-.>", require("bookmarks").jump_next)
+        vim.keymap.set("n", "mx", require("bookmarks").reset)
+
+        local bookmarkGroup = vim.api.nvim_create_augroup("bookmark_auto_restore", {})
+        vim.api.nvim_create_autocmd("VimLeave", {
+            callback = function()
+                require("bookmarks.sync").write()
+            end,
+            group = bookmarkGroup,
+        })
+        vim.api.nvim_create_autocmd({ "VimEnter", "SessionLoadPost" }, {
+            callback = function()
+                require("bookmarks.sync").read()
+            end,
+            group = bookmarkGroup,
+        })
+    end,
 }
-```
-
-## Configuration
-
-```lua
-vim.keymap.set("n", "mm", require("bookmarks").toggle)
-vim.keymap.set("n", "<C-,>", require("bookmarks").jump_prev)
-vim.keymap.set("n", "<C-.>", require("bookmarks").jump_next)
-vim.keymap.set("n", "mx", require("bookmarks").reset)
 ```
 
 ## Integration
@@ -37,6 +57,8 @@ require("lualine").setup({
 })
 ```
 
-## Thanks
+## Thanks & Inspired
+
 - https://github.com/niuiic/core.nvim
-    - Most of utility functions come from the repository.
+  - Most of utility functions come from the repository.
+- https://github.com/MattesGroeger/vim-bookmarks 
