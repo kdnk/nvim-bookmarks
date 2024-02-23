@@ -14,6 +14,7 @@ return {
             sign = {
                 group = "Bookmark",
                 name = "Bookmark",
+                text = "⚑",
             },
         })
 
