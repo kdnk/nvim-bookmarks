@@ -1,5 +1,5 @@
 local core = require("bookmarks-cycle-through.core")
-local bookmarks = require("bookmarks-cycle-through.bookmarks")
+local bookmark = require("bookmarks-cycle-through.bookmark")
 
 local M = {}
 
@@ -34,11 +34,11 @@ function M.toggle()
         local signs = get_signs(bufnr, lnum)
         core.list.each(signs, function(sign)
             vim.fn.sign_unplace(vim.g.bookmark_sign_group, { buffer = bufnr, id = sign.id })
-            bookmarks.delete_bookmark(bufnr, lnum)
+            bookmark.delete_bookmark(bufnr, lnum)
         end)
     else
         vim.fn.sign_place(sign_id, vim.g.bookmark_sign_group, vim.g.bookmark_sign_name, bufnr, { lnum = lnum })
-        bookmarks.add_bookmark(bufnr, lnum)
+        bookmark.add_bookmark(bufnr, lnum)
     end
 end
 
