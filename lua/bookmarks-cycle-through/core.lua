@@ -83,20 +83,6 @@ local list_includes = function(list, is_target)
     return false
 end
 
---- find item in list
----@generic T : any
----@param list T[]
----@param is_target fun(v: T, i:number): boolean
----@return T | nil
-local list_find = function(list, is_target)
-    for index, value in ipairs(list) do
-        if is_target(value, index) then
-            return value
-        end
-    end
-    return nil
-end
-
 --- list reduce
 ---@param list any[]
 ---@param cb fun(prev_res: any, cur_item: any, list: any[]): any
@@ -119,10 +105,52 @@ local list_each = function(list, cb)
     end
 end
 
+--- find item in list
+---@generic T : any
+---@param list T[]
+---@param is_target fun(v: T, i:number): boolean
+---@return T | nil
+local list_find = function(list, is_target)
+    for index, value in ipairs(list) do
+        if is_target(value, index) then
+            return value
+        end
+    end
+    return nil
+end
+
+--- find index in list
+---@generic T : any
+---@param list T[]
+---@param is_target fun(v: T, i:number): boolean
+---@return number | nil
+local list_find_index = function(list, is_target)
+    for index, value in ipairs(list) do
+        if is_target(value, index) then
+            return index
+        end
+    end
+    return nil
+end
+
+--- find last index in list
+---@generic T : any
+---@param list T[]
+---@param is_target fun(v: T, i:number): boolean
+---@return number | nil
+local function list_find_last_index(list, is_target)
+    local last_index = nil
+    list_each(list, function(value, index)
+        if is_target(value, index) then
+            last_index = index
+        end
+    end)
+    return last_index
+end
+
 ---@generic T : any
 ---@param list T[]
 local list_uniq = function(list)
-    print("[core.lua:125] list: " .. vim.inspect(list))
     local new_list = {}
     for _, v in ipairs(list) do
         if list_find(new_list, function(value)
@@ -254,6 +282,8 @@ return {
         reduce = list_reduce,
         merge = list_merge,
         find = list_find,
+        find_index = list_find_index,
+        find_last_index = list_find_last_index,
         sort = list_sort,
         each = list_each,
         uniq = list_uniq,
