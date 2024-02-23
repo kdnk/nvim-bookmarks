@@ -107,4 +107,8 @@ function M.reset_index()
     index = 1
 end
 
+function M.get_index()
+    return index
+end
+
 return M
