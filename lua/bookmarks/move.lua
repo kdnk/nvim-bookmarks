@@ -1,6 +1,6 @@
-local core = require("bookmarks-cycle-through.core")
-local bookmark = require("bookmarks-cycle-through.bookmark")
-local sync = require("bookmarks-cycle-through.sync")
+local core = require("bookmarks.core")
+local bookmark = require("bookmarks.bookmark")
+local sync = require("bookmarks.sync")
 
 local M = {}
 

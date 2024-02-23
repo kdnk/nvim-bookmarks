@@ -1,5 +1,5 @@
-local bookmark = require("bookmarks-cycle-through.bookmark")
-local move = require("bookmarks-cycle-through.move")
+local bookmark = require("bookmarks.bookmark")
+local move = require("bookmarks.move")
 local M = {}
 
 function M.bookmark_count()

@@ -1,4 +1,4 @@
-local core = require("bookmarks-cycle-through.core")
+local core = require("bookmarks.core")
 local M = {}
 
 ---@class Bookmark

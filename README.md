@@ -1,6 +1,4 @@
-# bookmarks-cycle-through.nvim
-
-This plugin adds a feature to move across buffers to [MattesGroeger/vim-bookmarks](https://github.com/MattesGroeger/vim-bookmarks).
+# bookmarks.lua
 
 ## Installation
 
@@ -8,25 +6,17 @@ This plugin adds a feature to move across buffers to [MattesGroeger/vim-bookmark
 
 ```lua
 {
-  "kdnk/bookmarks-cycle-through.nvim",
-  dependencies = {
-      "MattesGroeger/vim-bookmarks",
-  },
+  "kdnk/bookmarks.lua",
 }
 ```
 
 ## Configuration
 
 ```lua
-vim.keymap.set("n", "mm", function()
-    require("bookmarks-cycle-through").bookmark_toggle()
-end)
-vim.keymap.set("n", "]b", function()
-    require("bookmarks-cycle-through").cycle_through({ reverse = false })
-end)
-vim.keymap.set("n", "[b", function()
-    require("bookmarks-cycle-through").cycle_through({ reverse = true })
-end)
+vim.keymap.set("n", "mm", require("bookmarks").toggle)
+vim.keymap.set("n", "<C-,>", require("bookmarks").move_prev)
+vim.keymap.set("n", "<C-.>", require("bookmarks").move_next)
+vim.keymap.set("n", "mx", require("bookmarks").reset)
 ```
 
 ## Integration
@@ -34,17 +24,14 @@ end)
 ### lualine
 
 ```lua
-local function bookmark_count_or_index()
-    return string.format([[📘 %s]], require("bookmarks-cycle-through").bookmark_count_or_index())
+local function bookmark_count()
+    return string.format([[📘 %s]], require("bookmarks.lualine").bookmark_count())
 end
 
 require("lualine").setup({
     sections = {
         lualine_c = {
-            { bookmark_count_or_index },
-            "diff",
-            "diagnostics",
-            "LspStatus()",
+            { bookmark_count },
         },
     },
 })

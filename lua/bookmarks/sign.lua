@@ -1,5 +1,5 @@
-local core = require("bookmarks-cycle-through.core")
-local bookmark = require("bookmarks-cycle-through.bookmark")
+local core = require("bookmarks.core")
+local bookmark = require("bookmarks.bookmark")
 
 local M = {}
 
@@ -59,4 +59,3 @@ function M.remove_all_signs()
 end
 
 return M
-
