@@ -2,14 +2,15 @@ local core = require("bookmarks.core")
 local M = {}
 
 local default_config = {
+    persist = false,
+    serialize_path = "./.Bookmarks.json",
     sign = {
         group = "Bookmark",
         name = "Bookmark",
     },
-    serialize_path = "./.Bookmarks.json",
 }
 
----@param opts? { sign: { group: string, name: string }, serialize_path: string }
+---@param opts? { persist: boolean, serialize_path: string, sign: { group: string, name: string } }
 function M.setup(opts)
     local new_conf = vim.tbl_deep_extend("keep", opts or {}, default_config)
 

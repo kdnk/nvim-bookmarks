@@ -29,13 +29,17 @@ function M.delete(bufnr, lnum)
 end
 
 function M.write()
-    local json = bookmark.serialize()
-    vim.fn.writefile(json, config.serialize_path)
+    if config.persist then
+        local json = bookmark.serialize()
+        vim.fn.writefile(json, config.serialize_path)
+    end
 end
 
 function M.read()
-    bookmark.update_bookmarks(bookmark.deserialize())
-    M.sync_bookmarks_to_signs()
+    if config.persist then
+        bookmark.update_bookmarks(bookmark.deserialize())
+        M.sync_bookmarks_to_signs()
+    end
 end
 
 return M
