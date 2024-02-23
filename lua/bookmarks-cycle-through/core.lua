@@ -50,9 +50,10 @@ local list_filter = function(list, filter)
 end
 
 --- sort list
----@param list any[]
----@param to_swap fun(prev: any, cur: any): boolean
----@return any[]
+---@generic T : any
+---@param list T[]
+---@param to_swap fun(prev: T, cur: T): boolean
+---@return T[]
 local list_sort = function(list, to_swap)
     local new_list = {}
     for _, value in ipairs(list) do
@@ -153,8 +154,9 @@ table_clone = function(table)
 end
 
 --- table for each
----@param table object
----@param cb fun(k: string, v: any): nil
+---@generic T : any
+---@param table { [string]: T }
+---@param cb fun(k: string, v: T): nil
 local table_each = function(table, cb)
     for k, v in pairs(table) do
         cb(k, v)
@@ -197,6 +199,15 @@ local table_keys = function(t)
     return keys
 end
 
+---@param t object
+---@return boolean
+local table_is_empty = function(t)
+    if next(t) == nil then
+        return true
+    end
+    return false
+end
+
 ---@class core.Lua.Node
 ---@field children core.Lua.Node[] | nil
 
@@ -236,6 +247,7 @@ return {
         map = table_map,
         reduce = table_reduce,
         keys = table_keys,
+        is_empty = table_is_empty,
     },
     tree = {
         walk = tree_walk,
