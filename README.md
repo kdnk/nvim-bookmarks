@@ -10,7 +10,7 @@ return {
     config = function()
         require("bookmarks").setup({
             persist = true,
-            serialize_path = "./.Bookmarks.json",
+            serialize_path = "./.bookmarks.json",
             sign = {
                 group = "Bookmark",
                 name = "Bookmark",
