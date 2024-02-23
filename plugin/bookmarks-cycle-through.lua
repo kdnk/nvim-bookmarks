@@ -1,4 +1,4 @@
-vim.g.bookmark_sign_group = ""
+vim.g.bookmark_sign_group = "bookmark"
 vim.g.bookmark_sign_name = "Bookmark"
 
 ---@class Sign
