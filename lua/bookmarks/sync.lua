@@ -1,6 +1,7 @@
 local core = require("bookmarks.core")
 local bookmark = require("bookmarks.bookmark")
 local sign = require("bookmarks.sign")
+local config = require("bookmarks.config")
 
 local M = {}
 
@@ -29,7 +30,7 @@ end
 
 function M.write()
     local json = bookmark.serialize()
-    vim.fn.writefile(json, vim.g.bookmark_serialize_path)
+    vim.fn.writefile(json, config.serialize_path)
 end
 
 function M.read()

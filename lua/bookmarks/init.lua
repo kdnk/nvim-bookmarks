@@ -2,6 +2,7 @@ local bookmark = require("bookmarks.bookmark")
 local sign = require("bookmarks.sign")
 local jump = require("bookmarks.jump")
 local sync = require("bookmarks.sync")
+local config = require("bookmarks.config")
 
 local M = {}
 
@@ -28,6 +29,11 @@ end
 
 function M.jump_prev()
     jump.jump({ reverse = true })
+end
+
+---@param opts? { sign: { group: string, name: string }, serialize_path: string }
+function M.setup(opts)
+    config.setup(opts)
 end
 
 return M
