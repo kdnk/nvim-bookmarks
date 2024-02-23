@@ -25,6 +25,7 @@ local function move_index(opts)
 end
 
 ---@param opts { reverse: boolean }
+---@return integer
 local function normalize_bookmark(opts)
     local bookmarks = bookmark.get_bookmarks()
     local b = bookmarks[index]
@@ -47,6 +48,7 @@ end
 
 ---@param i integer
 ---@param opts { reverse: boolean }
+---@return nil
 local function move_cursor(i, opts)
     i = normalize_bookmark(opts)
     local bookmarks = bookmark.get_bookmarks()
@@ -58,6 +60,7 @@ end
 
 ---@param filename string
 ---@param lnum integer
+---@return { smaller_index: integer, bigger_index: integer }
 local function get_neighboring_bookmarks(filename, lnum)
     local bookmarks = bookmark.get_bookmarks()
 
@@ -72,6 +75,7 @@ local function get_neighboring_bookmarks(filename, lnum)
 end
 
 ---@param opts { reverse: boolean }
+---@return boolean
 local function move_line_within_file(opts)
     local current_filename = vim.api.nvim_buf_get_name(0)
     local current_lnum = vim.api.nvim_win_get_cursor(0)[1]

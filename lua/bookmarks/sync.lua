@@ -38,7 +38,6 @@ end
 
 function M.read()
     bookmark.update_bookmarks(bookmark.deserialize())
-    print("[sync.lua:30] bookmar: " .. vim.inspect(bookmark))
     M.sync_bookmarks_to_signs()
 end
 

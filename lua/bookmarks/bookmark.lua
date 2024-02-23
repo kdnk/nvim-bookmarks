@@ -43,8 +43,6 @@ end
 function M.add_bookmark(bufnr, lnum)
     local filename = vim.api.nvim_buf_get_name(bufnr)
     table.insert(bookmarks, { filename = filename, bufnr = bufnr, lnum = lnum })
-
-    M.get_bookmarks()
 end
 
 ---@param bufnr integer
@@ -57,7 +55,6 @@ function M.delete_bookmark(bufnr, lnum)
             table.remove(bookmarks, index)
         end
     end)
-    M.get_bookmarks()
 end
 
 function M.remove_all_bookmarks()
