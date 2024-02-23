@@ -35,9 +35,10 @@ local list_map = function(list, map)
 end
 
 --- filter list
----@param list any[]
----@param filter fun(v: any, i: number): boolean
----@return any[]
+---@generic T : any
+---@param list T[]
+---@param filter fun(v: T, i: number): boolean
+---@return T[]
 local list_filter = function(list, filter)
     local new_list = {}
     for index, value in ipairs(list) do

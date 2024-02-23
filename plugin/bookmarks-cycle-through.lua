@@ -9,11 +9,4 @@ vim.g.bookmark_sign_name = "Bookmark"
 ---@field name string
 ---@field priority number
 
----@class Bookmark
----@field bufnr number
----@field lnum number
-
----@type Bookmark[]
-vim.g.bookmarks = {}
-
 vim.fn.sign_define("Bookmark", { text = "⚑" })

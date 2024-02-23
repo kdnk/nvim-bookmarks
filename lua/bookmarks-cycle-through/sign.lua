@@ -1,6 +1,7 @@
-local M = {}
-
 local core = require("bookmarks-cycle-through.core")
+local bookmarks = require("bookmarks-cycle-through.bookmarks")
+
+local M = {}
 
 ---@param bufnr integer
 ---@param lnum number
@@ -9,7 +10,6 @@ local function has_signs(bufnr, lnum)
     local signs = vim.fn.sign_getplaced(bufnr, { group = vim.g.bookmark_sign_group, lnum = lnum })[1]["signs"]
 
     return core.list.includes(signs, function(sign)
-        print("sign: " .. vim.inspect(sign))
         return sign.lnum == lnum
     end)
 end
@@ -34,9 +34,11 @@ function M.toggle()
         local signs = get_signs(bufnr, lnum)
         core.list.each(signs, function(sign)
             vim.fn.sign_unplace(vim.g.bookmark_sign_group, { buffer = bufnr, id = sign.id })
+            bookmarks.delete_bookmark(bufnr, lnum)
         end)
     else
         vim.fn.sign_place(sign_id, vim.g.bookmark_sign_group, vim.g.bookmark_sign_name, bufnr, { lnum = lnum })
+        bookmarks.add_bookmark(bufnr, lnum)
     end
 end
 
