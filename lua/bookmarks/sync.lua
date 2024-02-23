@@ -13,17 +13,6 @@ function M.sync_bookmarks_to_signs()
     end)
 end
 
--- ---@param index integer
--- function M.normalize_bookmarks(index)
---     local bookmarks = M.get_bookmarks()
---     local b = bookmarks[index]
---     local max_lnum = vim.api.nvim_buf_line_count(b.bufnr)
---     if max_lnum < b.lnum then
---         M.delete(b.bufnr, b.lnum)
---         M.sync_bookmarks_to_signs()
---     end
--- end
-
 ---@param bufnr integer
 ---@param lnum number
 function M.add(bufnr, lnum)

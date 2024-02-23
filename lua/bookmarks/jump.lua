@@ -1,6 +1,7 @@
 local core = require("bookmarks.core")
 local bookmark = require("bookmarks.bookmark")
 local sync = require("bookmarks.sync")
+local io = require("bookmarks.io")
 
 local M = {}
 
@@ -29,7 +30,8 @@ end
 local function validate_bookmark(i)
     local bookmarks = bookmark.get_bookmarks()
     local b = bookmarks[i]
-    local max_lnum = vim.api.nvim_buf_line_count(b.bufnr)
+    local max_lnum = io.get_max_lnum(b.filename)
+
     return b.lnum < max_lnum
 end
 

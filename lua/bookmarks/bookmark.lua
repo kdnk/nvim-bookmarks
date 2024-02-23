@@ -2,7 +2,7 @@ local core = require("bookmarks.core")
 local M = {}
 
 ---@class Bookmark
----@field filename number
+---@field filename string
 ---@field bufnr integer
 ---@field lnum number
 
@@ -12,7 +12,6 @@ local bookmarks = {}
 local function update_bufnr()
     core.list.each(bookmarks, function(bookmark)
         local bufnr = vim.fn.bufadd(bookmark.filename)
-        vim.fn.bufload(bufnr)
         bookmark.bufnr = bufnr
     end)
 end
