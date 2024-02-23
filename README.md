@@ -36,3 +36,7 @@ require("lualine").setup({
     },
 })
 ```
+
+## Thanks
+- https://github.com/niuiic/core.nvim
+    - Most of utility functions come from the repository.
