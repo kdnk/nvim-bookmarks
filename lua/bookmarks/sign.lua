@@ -3,6 +3,14 @@ local config = require("bookmarks.config")
 
 local M = {}
 
+---@class Sign
+---@field group string
+---@field id integer
+---@field lnum number
+---@field bufnr integer
+---@field name string
+---@field priority number
+
 ---@param bufnr integer
 ---@param lnum number
 ---@return boolean

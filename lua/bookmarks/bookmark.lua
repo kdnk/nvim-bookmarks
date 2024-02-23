@@ -1,5 +1,6 @@
 local core = require("bookmarks.core")
 local config = require("bookmarks.config")
+
 local M = {}
 
 ---@class Bookmark
