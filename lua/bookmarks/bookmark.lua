@@ -43,7 +43,7 @@ function M.list()
     return new_bookmarks
 end
 
-function M.update_bookmarks(bs)
+function M.update_all(bs)
     bookmarks = bs
 end
 

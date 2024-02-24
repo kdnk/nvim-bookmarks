@@ -24,7 +24,7 @@ function M.read()
 
     local json = file.json_read(config.persist.path)
     local bookmarks = bookmark.fromJson(json)
-    bookmark.update_bookmarks(bookmarks)
+    bookmark.update_all(bookmarks)
 
     sync.bookmarks_to_signs()
 end
