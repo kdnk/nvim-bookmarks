@@ -46,7 +46,7 @@ local function sanitize_bookmark(opts)
     end
 
     bookmark.delete(b.bufnr, b.lnum)
-    sync.sync_bookmarks_to_signs()
+    sync.bookmarks_to_signs()
 
     bookmarks = bookmark.get_bookmarks()
     if not opts.reverse then

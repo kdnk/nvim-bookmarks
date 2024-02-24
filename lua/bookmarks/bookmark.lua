@@ -1,6 +1,4 @@
 local core = require("bookmarks.core")
-local config = require("bookmarks.config")
-local file = require("bookmarks.file")
 
 local M = {}
 
