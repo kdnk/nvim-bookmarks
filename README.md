@@ -1,6 +1,6 @@
 # bookmarks.lua
 
-## Installation
+## Installation & Configuration
 
 ### lazy.nvim
 
@@ -9,12 +9,13 @@ return {
     "kdnk/bookmarks.lua",
     config = function()
         require("bookmarks").setup({
-            persist = true,
-            serialize_path = "./.bookmarks.json",
+            persist = {
+                enable = true,
+                path = "./.bookmarks.json",
+            },
             sign = {
                 group = "Bookmark",
                 name = "Bookmark",
-                text = "⚑",
             },
         })
 
@@ -26,13 +27,13 @@ return {
         local bookmarkGroup = vim.api.nvim_create_augroup("bookmark_auto_restore", {})
         vim.api.nvim_create_autocmd("VimLeave", {
             callback = function()
-                require("bookmarks.sync").write()
+                require("bookmarks.persist").write()
             end,
             group = bookmarkGroup,
         })
         vim.api.nvim_create_autocmd({ "VimEnter", "SessionLoadPost" }, {
             callback = function()
-                require("bookmarks.sync").read()
+                require("bookmarks.persist").read()
             end,
             group = bookmarkGroup,
         })
@@ -60,6 +61,6 @@ require("lualine").setup({
 
 ## Thanks & Inspired
 
-- https://github.com/niuiic/core.nvim
-  - Most of utility functions come from the repository.
-- https://github.com/MattesGroeger/vim-bookmarks 
+-   https://github.com/niuiic/core.nvim
+    -   Most of utility functions come from the repository.
+-   https://github.com/MattesGroeger/vim-bookmarks
