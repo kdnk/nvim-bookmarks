@@ -1,7 +1,7 @@
 local core = require("bookmarks.core")
 local bookmark = require("bookmarks.bookmark")
 local sync = require("bookmarks.sync")
-local io = require("bookmarks.io")
+local file = require("bookmarks.file")
 
 local M = {}
 
@@ -30,7 +30,7 @@ end
 local function validate_bookmark(i)
     local bookmarks = bookmark.get_bookmarks()
     local b = bookmarks[i]
-    local max_lnum = io.get_max_lnum(b.filename)
+    local max_lnum = file.get_max_lnum(b.filename)
 
     return b.lnum < max_lnum
 end

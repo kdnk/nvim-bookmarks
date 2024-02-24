@@ -1,5 +1,6 @@
 local core = require("bookmarks.core")
 local config = require("bookmarks.config")
+local file = require("bookmarks.file")
 
 local M = {}
 
@@ -77,12 +78,18 @@ function M.serialize()
     return { vim.json.encode(M.get_bookmarks()) }
 end
 
+---@return Bookmark[]
 function M.deserialize()
+    if not file.exists(config.serialize_path) then
+        return {}
+    end
+
     local json = vim.fn.readfile(config.serialize_path)
     if json == nil then
-        return
+        return {}
+    else
+        return vim.json.decode(json[1]) or {}
     end
-    return vim.json.decode(json[1]) or {}
 end
 
 return M

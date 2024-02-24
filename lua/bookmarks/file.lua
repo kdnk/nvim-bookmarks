@@ -15,4 +15,8 @@ function M.get_max_lnum(filename)
     return line_count
 end
 
+function M.exists(filename)
+    return vim.loop.fs_stat(filename) and true or false
+end
+
 return M
