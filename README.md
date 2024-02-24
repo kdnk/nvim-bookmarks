@@ -8,7 +8,10 @@
 return {
     "kdnk/bookmarks.lua",
     config = function()
-        require("bookmarks").setup({
+        local bm = require("bookmarks")
+        local persist = require("bookmarks.persist")
+
+        bm.setup({
             persist = {
                 enable = true,
                 path = "./.bookmarks.json",
@@ -16,24 +19,25 @@ return {
             sign = {
                 group = "Bookmark",
                 name = "Bookmark",
+                text = "⚑",
             },
         })
 
-        vim.keymap.set("n", "mm", require("bookmarks").toggle)
-        vim.keymap.set("n", "<C-,>", require("bookmarks").jump_prev)
-        vim.keymap.set("n", "<C-.>", require("bookmarks").jump_next)
-        vim.keymap.set("n", "mx", require("bookmarks").reset)
+        vim.keymap.set("n", "mm", bm.toggle)
+        vim.keymap.set("n", "<C-,>", bm.jump_prev)
+        vim.keymap.set("n", "<C-.>", bm.jump_next)
+        vim.keymap.set("n", "mx", bm.reset)
 
         local bookmarkGroup = vim.api.nvim_create_augroup("bookmark_auto_restore", {})
         vim.api.nvim_create_autocmd("VimLeave", {
             callback = function()
-                require("bookmarks.persist").write()
+                persist.write()
             end,
             group = bookmarkGroup,
         })
         vim.api.nvim_create_autocmd({ "VimEnter", "SessionLoadPost" }, {
             callback = function()
-                require("bookmarks.persist").read()
+                persist.read()
             end,
             group = bookmarkGroup,
         })
