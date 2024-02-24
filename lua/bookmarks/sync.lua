@@ -2,6 +2,7 @@ local core = require("bookmarks.core")
 local bookmark = require("bookmarks.bookmark")
 local sign = require("bookmarks.sign")
 local config = require("bookmarks.config")
+local file = require("bookmarks.file")
 
 local M = {}
 
@@ -30,16 +31,26 @@ end
 
 function M.write()
     if config.persist then
-        local json = bookmark.serialize()
-        vim.fn.writefile(json, config.serialize_path)
+        bookmark.update_bufnr()
+        local json = bookmark.toJson()
+        file.json_write(json, config.serialize_path)
     end
 end
 
 function M.read()
-    if config.persist then
-        bookmark.update_bookmarks(bookmark.deserialize())
-        M.sync_bookmarks_to_signs()
+    if not config.persist then
+        return {}
     end
+
+    if not file.exists(config.serialize_path) then
+        return {}
+    end
+
+    local json = file.json_read(config.serialize_path)
+    local bookmarks = bookmark.fromJson(json)
+    bookmark.update_bookmarks(bookmarks)
+
+    M.sync_bookmarks_to_signs()
 end
 
 return M

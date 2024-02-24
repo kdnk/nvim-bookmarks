@@ -19,4 +19,13 @@ function M.exists(filename)
     return vim.loop.fs_stat(filename) and true or false
 end
 
+function M.json_read(filename)
+    local json = vim.fn.readfile(filename)
+    return json
+end
+
+function M.json_write(json, filename)
+    vim.fn.writefile(json, filename)
+end
+
 return M

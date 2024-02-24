@@ -12,7 +12,7 @@ local M = {}
 ---@type Bookmark[]
 local bookmarks = {}
 
-local function update_bufnr()
+function M.update_bufnr()
     core.list.each(bookmarks, function(bookmark)
         local bufnr = vim.fn.bufadd(bookmark.filename)
         bookmark.bufnr = bufnr
@@ -21,7 +21,7 @@ end
 
 ---@return Bookmark[]
 function M.get_bookmarks()
-    update_bufnr()
+    M.update_bufnr()
 
     local filenames = core.list.uniq(core.list.map(bookmarks, function(bookmark)
         return bookmark.filename
@@ -73,22 +73,18 @@ function M.remove_all_bookmarks()
     bookmarks = {}
 end
 
-function M.serialize()
-    update_bufnr()
+---@return any
+function M.toJson()
     return { vim.json.encode(M.get_bookmarks()) }
 end
 
+---@param json any[]
 ---@return Bookmark[]
-function M.deserialize()
-    if not file.exists(config.serialize_path) then
-        return {}
-    end
-
-    local json = vim.fn.readfile(config.serialize_path)
+function M.fromJson(json)
     if json == nil then
         return {}
     else
-        return vim.json.decode(json[1]) or {}
+        return vim.json.decode(json[1]) or {} --[[ @as Bookmark[] ]]
     end
 end
 
