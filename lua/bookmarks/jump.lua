@@ -50,7 +50,7 @@ local function sanitize_bookmark(opts)
 
     bookmarks = bookmark.get_bookmarks()
     if not opts.reverse then
-        index = #bookmarks < index and #bookmarks or index
+        index = #bookmarks < index and 1 or index
         if is_valid_bookmark(index) then
             return index
         else
