@@ -63,6 +63,13 @@ require("lualine").setup({
 })
 ```
 
+### Telescope
+
+```lua
+require("telescope").load_extension("bookmarks")
+vim.keymap.set("n", "<leader>b", function() require("telescope").extensions.bookmarks.list() end, { silent = true })
+```
+
 ## Thanks & Inspired
 
 -   https://github.com/niuiic/core.nvim
