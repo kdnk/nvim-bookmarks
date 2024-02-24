@@ -38,12 +38,12 @@ end
 ---@param opts { reverse: boolean }
 ---@return integer
 local function sanitize_bookmark(opts)
-    local bookmarks = bookmark.list()
-    local b = bookmarks[index]
-
     if is_valid_bookmark(index) then
         return index
     end
+
+    local bookmarks = bookmark.list()
+    local b = bookmarks[index]
 
     bookmark.delete(b.bufnr, b.lnum)
     sync.bookmarks_to_signs()
