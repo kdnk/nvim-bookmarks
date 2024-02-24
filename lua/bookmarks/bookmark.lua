@@ -67,7 +67,7 @@ function M.delete(bufnr, lnum)
     end)
 end
 
-function M.remove_all_bookmarks()
+function M.remove_all()
     bookmarks = {}
 end
 

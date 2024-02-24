@@ -6,7 +6,7 @@ local config = require("bookmarks.config")
 local M = {}
 
 function M.reset()
-    bookmark.remove_all_bookmarks()
+    bookmark.remove_all()
     sign.remove_all_signs()
     jump.reset_index()
 end
