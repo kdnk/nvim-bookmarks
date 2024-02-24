@@ -10,7 +10,7 @@ local index = 1
 ---@param opts { reverse: boolean }
 ---@return integer
 local function move_index(opts)
-    local bookmarks = bookmark.get_bookmarks()
+    local bookmarks = bookmark.list()
     if not opts.reverse then
         index = index + 1
         if #bookmarks < index then
@@ -28,7 +28,7 @@ end
 ---@param i integer
 ---@return boolean
 local function is_valid_bookmark(i)
-    local bookmarks = bookmark.get_bookmarks()
+    local bookmarks = bookmark.list()
     local b = bookmarks[i]
     local max_lnum = file.get_max_lnum(b.filename)
 
@@ -38,7 +38,7 @@ end
 ---@param opts { reverse: boolean }
 ---@return integer
 local function sanitize_bookmark(opts)
-    local bookmarks = bookmark.get_bookmarks()
+    local bookmarks = bookmark.list()
     local b = bookmarks[index]
 
     if is_valid_bookmark(index) then
@@ -48,7 +48,7 @@ local function sanitize_bookmark(opts)
     bookmark.delete(b.bufnr, b.lnum)
     sync.bookmarks_to_signs()
 
-    bookmarks = bookmark.get_bookmarks()
+    bookmarks = bookmark.list()
     if not opts.reverse then
         index = #bookmarks < index and 1 or index
         if is_valid_bookmark(index) then
@@ -70,7 +70,7 @@ end
 ---@return nil
 local function jump_cursor(opts)
     index = sanitize_bookmark(opts)
-    local bookmarks = bookmark.get_bookmarks()
+    local bookmarks = bookmark.list()
     local b = bookmarks[index]
     vim.api.nvim_set_current_buf(b.bufnr)
     local win_id = vim.api.nvim_get_current_win()
@@ -81,7 +81,7 @@ end
 ---@param lnum integer
 ---@return { prev: integer, next: integer }
 local function get_neighboring_bookmarks(filename, lnum)
-    local bookmarks = bookmark.get_bookmarks()
+    local bookmarks = bookmark.list()
 
     local prev = core.list.find_last_index(bookmarks, function(b)
         return filename == b.filename and b.lnum < lnum
@@ -114,7 +114,7 @@ end
 
 ---@param opts { reverse: boolean }
 function M.jump(opts)
-    local bookmarks = bookmark.get_bookmarks()
+    local bookmarks = bookmark.list()
     if #bookmarks == 0 then
         return
     end

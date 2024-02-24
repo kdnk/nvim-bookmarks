@@ -1,7 +1,6 @@
 local bookmark = require("bookmarks.bookmark")
 local sign = require("bookmarks.sign")
 local jump = require("bookmarks.jump")
-local sync = require("bookmarks.sync")
 local config = require("bookmarks.config")
 
 local M = {}

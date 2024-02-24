@@ -18,7 +18,7 @@ function M.update_bufnr()
 end
 
 ---@return Bookmark[]
-function M.get_bookmarks()
+function M.list()
     M.update_bufnr()
 
     local filenames = core.list.uniq(core.list.map(bookmarks, function(bookmark)
@@ -73,7 +73,7 @@ end
 
 ---@return any
 function M.toJson()
-    return { vim.json.encode(M.get_bookmarks()) }
+    return { vim.json.encode(M.list()) }
 end
 
 ---@param json any[]

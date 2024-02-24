@@ -7,7 +7,7 @@ local M = {}
 function M.bookmarks_to_signs()
     sign.remove_all_signs()
 
-    local bookmarks = bookmark.get_bookmarks()
+    local bookmarks = bookmark.list()
     core.list.each(bookmarks, function(b)
         sign.add(b.bufnr, b.lnum)
     end)
