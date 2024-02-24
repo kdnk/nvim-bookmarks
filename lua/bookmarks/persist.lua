@@ -5,7 +5,7 @@ local sync = require("bookmarks.sync")
 
 local M = {}
 
-function M.write()
+function M.backup()
     if config.persist.enable then
         bookmark.update_bufnr()
         local json = bookmark.toJson()
@@ -13,7 +13,7 @@ function M.write()
     end
 end
 
-function M.read()
+function M.restore()
     if not config.persist.enable then
         return {}
     end

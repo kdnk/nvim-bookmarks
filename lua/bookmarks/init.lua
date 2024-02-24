@@ -1,7 +1,8 @@
+local config = require("bookmarks.config")
 local bookmark = require("bookmarks.bookmark")
 local sign = require("bookmarks.sign")
 local jump = require("bookmarks.jump")
-local config = require("bookmarks.config")
+local persist = require("bookmarks.persist")
 
 local M = {}
 
@@ -30,6 +31,14 @@ end
 
 function M.jump_prev()
     jump.jump({ reverse = true })
+end
+
+function M.backup()
+    persist.backup()
+end
+
+function M.restore()
+    persist.restore()
 end
 
 ---@param opts? Config
