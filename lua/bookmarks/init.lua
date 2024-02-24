@@ -31,7 +31,7 @@ function M.jump_prev()
     jump.jump({ reverse = true })
 end
 
----@param opts? { sign: { group: string, name: string }, serialize_path: string }
+---@param opts? Config
 function M.setup(opts)
     config.setup(opts)
 end

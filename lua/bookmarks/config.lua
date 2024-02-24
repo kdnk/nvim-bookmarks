@@ -11,7 +11,9 @@ local default_config = {
     },
 }
 
----@param opts? { persist: boolean, serialize_path: string, sign: { group: string, name: string, text: string } }
+---@alias Config { persist: boolean, serialize_path: string, sign: { group: string, name: string, text: string } }
+
+---@param opts? Config
 function M.setup(opts)
     local new_conf = vim.tbl_deep_extend("keep", opts or {}, default_config)
 
