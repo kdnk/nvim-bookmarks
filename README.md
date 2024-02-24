@@ -27,6 +27,7 @@ return {
         vim.keymap.set("n", "<C-,>", bm.jump_prev)
         vim.keymap.set("n", "<C-.>", bm.jump_next)
         vim.keymap.set("n", "mx", bm.reset)
+        vim.keymap.set("n", "mr", persist.read)
 
         local bookmarkGroup = vim.api.nvim_create_augroup("bookmark_auto_restore", {})
         vim.api.nvim_create_autocmd("VimLeave", {
