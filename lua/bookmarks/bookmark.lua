@@ -1,4 +1,5 @@
 local core = require("bookmarks.core")
+local file = require("bookmarks.file")
 
 local M = {}
 
@@ -24,6 +25,16 @@ function M.exists(bufnr, lnum)
     return core.list.includes(bookmarks, function(b)
         return b.bufnr == bufnr and b.lnum == lnum
     end)
+end
+
+---@param index integer
+---@return boolean
+function M.is_valid(index)
+    local bs = M.list()
+    local b = bs[index]
+    local max_lnum = file.get_max_lnum(b.filename)
+
+    return b.lnum <= max_lnum
 end
 
 ---@return Bookmark[]
