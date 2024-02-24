@@ -2,8 +2,10 @@ local core = require("bookmarks.core")
 local M = {}
 
 local default_config = {
-    persist = false,
-    serialize_path = "./.Bookmarks.json",
+    persist = {
+        enable = true,
+        path = "./.bookmarks.json",
+    },
     sign = {
         group = "Bookmark",
         name = "Bookmark",

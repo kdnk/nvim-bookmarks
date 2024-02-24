@@ -6,23 +6,23 @@ local sync = require("bookmarks.sync")
 local M = {}
 
 function M.write()
-    if config.persist then
+    if config.persist.enable then
         bookmark.update_bufnr()
         local json = bookmark.toJson()
-        file.json_write(json, config.serialize_path)
+        file.json_write(json, config.persist.path)
     end
 end
 
 function M.read()
-    if not config.persist then
+    if not config.persist.enable then
         return {}
     end
 
-    if not file.exists(config.serialize_path) then
+    if not file.exists(config.persist.path) then
         return {}
     end
 
-    local json = file.json_read(config.serialize_path)
+    local json = file.json_read(config.persist.path)
     local bookmarks = bookmark.fromJson(json)
     bookmark.update_bookmarks(bookmarks)
 
