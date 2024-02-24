@@ -32,7 +32,7 @@ local function is_valid_bookmark(i)
     local b = bookmarks[i]
     local max_lnum = file.get_max_lnum(b.filename)
 
-    return b.lnum < max_lnum
+    return b.lnum <= max_lnum
 end
 
 ---@param opts { reverse: boolean }
