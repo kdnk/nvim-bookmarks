@@ -13,17 +13,6 @@ local M = {}
 
 ---@param bufnr integer
 ---@param lnum number
----@return boolean
-function M.has_signs(bufnr, lnum)
-    local signs = vim.fn.sign_getplaced(bufnr, { group = config.sign.group, lnum = lnum })[1]["signs"]
-
-    return core.list.includes(signs, function(sign)
-        return sign.lnum == lnum
-    end)
-end
-
----@param bufnr integer
----@param lnum number
 ---@return Sign[]
 local function get_signs(bufnr, lnum)
     local signs = vim.fn.sign_getplaced(bufnr, { group = config.sign.group, lnum = lnum })[1]["signs"] --[[@as Sign]]

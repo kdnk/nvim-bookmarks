@@ -71,8 +71,9 @@ local list_sort = function(list, to_swap)
 end
 
 --- whether list includes value
----@param list any[]
----@param is_target fun(v: any, i: number): boolean
+---@generic T : any
+---@param list T[]
+---@param is_target fun(v: T, i: number): boolean
 ---@return boolean
 local list_includes = function(list, is_target)
     for index, value in ipairs(list) do

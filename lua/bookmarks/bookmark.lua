@@ -17,6 +17,15 @@ function M.update_bufnr()
     end)
 end
 
+---@param bufnr integer
+---@param lnum number
+---@return boolean
+function M.exists(bufnr, lnum)
+    return core.list.includes(bookmarks, function(b)
+        return b.bufnr == bufnr and b.lnum == lnum
+    end)
+end
+
 ---@return Bookmark[]
 function M.list()
     M.update_bufnr()

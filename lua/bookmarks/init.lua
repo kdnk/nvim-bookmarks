@@ -15,7 +15,7 @@ function M.toggle()
     local lnum = vim.api.nvim_win_get_cursor(0)[1]
     local bufnr = vim.api.nvim_get_current_buf()
 
-    if sign.has_signs(bufnr, lnum) then
+    if bookmark.exists(bufnr, lnum) then
         sign.delete(bufnr, lnum)
         bookmark.delete(bufnr, lnum)
     else
