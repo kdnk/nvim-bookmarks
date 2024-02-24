@@ -5,7 +5,7 @@ local sign = require("bookmarks.sign")
 local M = {}
 
 function M.bookmarks_to_signs()
-    sign.remove_all_signs()
+    sign.remove_all()
 
     local bookmarks = bookmark.list()
     core.list.each(bookmarks, function(b)

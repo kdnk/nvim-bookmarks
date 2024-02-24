@@ -7,7 +7,7 @@ local M = {}
 
 function M.reset()
     bookmark.remove_all()
-    sign.remove_all_signs()
+    sign.remove_all()
     jump.reset_index()
 end
 

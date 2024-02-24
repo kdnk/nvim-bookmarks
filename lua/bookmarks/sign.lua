@@ -49,7 +49,7 @@ function M.delete(bufnr, lnum)
     end)
 end
 
-function M.remove_all_signs()
+function M.remove_all()
     vim.fn.sign_unplace(config.sign.group)
 end
 
