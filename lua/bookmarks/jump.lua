@@ -25,41 +25,15 @@ local function move_index(opts)
     return index
 end
 
----@param opts { reverse: boolean }
----@return integer
-local function sanitize_bookmark(opts)
-    if bookmark.is_valid(index) then
-        return index
-    end
-
-    local bookmarks = bookmark.list()
-    local b = bookmarks[index]
-
-    bookmark.delete(b.bufnr, b.lnum)
-    sync.bookmarks_to_signs()
-
-    bookmarks = bookmark.list()
-    if not opts.reverse then
-        index = #bookmarks < index and 1 or index
-        if bookmark.is_valid(index) then
-            return index
-        else
-            return sanitize_bookmark(opts)
-        end
-    else
-        index = move_index(opts)
-        if bookmark.is_valid(index) then
-            return index
-        else
-            return sanitize_bookmark(opts)
-        end
-    end
-end
-
----@param opts { reverse: boolean }
----@return nil
 local function jump_cursor(opts)
-    index = sanitize_bookmark(opts)
+    index = bookmark.sanitize(index, function()
+        if not opts.reverse then
+            index = #bookmark.list() < index and 1 or index
+        else
+            index = move_index(opts)
+        end
+        return index
+    end)
     local bookmarks = bookmark.list()
     local b = bookmarks[index]
     vim.api.nvim_set_current_buf(b.bufnr)

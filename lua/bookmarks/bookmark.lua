@@ -29,12 +29,34 @@ end
 
 ---@param index integer
 ---@return boolean
-function M.is_valid(index)
+local function is_valid(index)
     local bs = M.list()
     local b = bs[index]
     local max_lnum = file.get_max_lnum(b.filename)
 
     return b.lnum <= max_lnum
+end
+
+---@param index integer
+---@param update_index fun(): integer
+---@return integer
+function M.sanitize(index, update_index)
+    if is_valid(index) then
+        return index
+    end
+
+    local bs = M.list()
+    local b = bs[index]
+
+    M.delete(b.bufnr, b.lnum)
+
+    index = update_index()
+
+    if is_valid(index) then
+        return index
+    else
+        return M.sanitize(index, update_index)
+    end
 end
 
 ---@return Bookmark[]
