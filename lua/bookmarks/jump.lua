@@ -27,7 +27,7 @@ end
 
 ---@param i integer
 ---@return boolean
-local function validate_bookmark(i)
+local function is_valid_bookmark(i)
     local bookmarks = bookmark.get_bookmarks()
     local b = bookmarks[i]
     local max_lnum = file.get_max_lnum(b.filename)
@@ -37,38 +37,39 @@ end
 
 ---@param opts { reverse: boolean }
 ---@return integer
-local function normalize_bookmark(opts)
+local function sanitize_bookmark(opts)
     local bookmarks = bookmark.get_bookmarks()
     local b = bookmarks[index]
 
-    if not validate_bookmark(index) then
-        sync.delete(b.bufnr, b.lnum)
-        sync.sync_bookmarks_to_signs()
+    if is_valid_bookmark(index) then
+        return index
+    end
 
-        bookmarks = bookmark.get_bookmarks()
-        if not opts.reverse then
-            index = #bookmarks < index and #bookmarks or index
-            if validate_bookmark(index) then
-                return index
-            else
-                return normalize_bookmark(opts)
-            end
+    bookmark.delete(b.bufnr, b.lnum)
+    sync.sync_bookmarks_to_signs()
+
+    bookmarks = bookmark.get_bookmarks()
+    if not opts.reverse then
+        index = #bookmarks < index and #bookmarks or index
+        if is_valid_bookmark(index) then
+            return index
         else
-            index = move_index(opts)
-            if validate_bookmark(index) then
-                return index
-            else
-                return normalize_bookmark(opts)
-            end
+            return sanitize_bookmark(opts)
+        end
+    else
+        index = move_index(opts)
+        if is_valid_bookmark(index) then
+            return index
+        else
+            return sanitize_bookmark(opts)
         end
     end
-    return index
 end
 
 ---@param opts { reverse: boolean }
 ---@return nil
 local function jump_cursor(opts)
-    index = normalize_bookmark(opts)
+    index = sanitize_bookmark(opts)
     local bookmarks = bookmark.get_bookmarks()
     local b = bookmarks[index]
     vim.api.nvim_set_current_buf(b.bufnr)
@@ -78,18 +79,18 @@ end
 
 ---@param filename string
 ---@param lnum integer
----@return { smaller_index: integer, bigger_index: integer }
+---@return { prev: integer, next: integer }
 local function get_neighboring_bookmarks(filename, lnum)
     local bookmarks = bookmark.get_bookmarks()
 
-    local smaller_index = core.list.find_last_index(bookmarks, function(b)
+    local prev = core.list.find_last_index(bookmarks, function(b)
         return filename == b.filename and b.lnum < lnum
     end)
-    local bigger_index = core.list.find_index(bookmarks, function(b)
+    local next = core.list.find_index(bookmarks, function(b)
         return b.filename == filename and lnum < b.lnum
     end)
 
-    return { smaller_index = smaller_index or -1, bigger_index = bigger_index or -1 }
+    return { prev = prev or -1, next = next or -1 }
 end
 
 ---@param opts { reverse: boolean }
@@ -99,12 +100,12 @@ local function jump_line_within_file(opts)
     local current_lnum = vim.api.nvim_win_get_cursor(0)[1]
 
     local neighbors = get_neighboring_bookmarks(current_filename, current_lnum)
-    if not opts.reverse and 0 < neighbors.bigger_index then
-        index = neighbors.bigger_index
+    if not opts.reverse and 0 < neighbors.next then
+        index = neighbors.next
         jump_cursor(opts)
         return true
-    elseif opts.reverse and 0 < neighbors.smaller_index then
-        index = neighbors.smaller_index
+    elseif opts.reverse and 0 < neighbors.prev then
+        index = neighbors.prev
         jump_cursor(opts)
         return true
     end

@@ -52,7 +52,7 @@ end
 ---@param bufnr integer
 ---@param lnum number
 ---@return nil
-function M.add_bookmark(bufnr, lnum)
+function M.add(bufnr, lnum)
     local filename = vim.api.nvim_buf_get_name(bufnr)
     table.insert(bookmarks, { filename = filename, bufnr = bufnr, lnum = lnum })
 end
@@ -60,7 +60,7 @@ end
 ---@param bufnr integer
 ---@param lnum number
 ---@return nil
-function M.delete_bookmark(bufnr, lnum)
+function M.delete(bufnr, lnum)
     local filename = vim.api.nvim_buf_get_name(bufnr)
     core.list.each(bookmarks, function(bookmark, index)
         if bookmark.filename == filename and bookmark.lnum == lnum then

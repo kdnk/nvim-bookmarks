@@ -35,14 +35,14 @@ end
 
 ---@param bufnr integer
 ---@param lnum number
-function M.add_sign(bufnr, lnum)
+function M.add(bufnr, lnum)
     local sign_id = 0
     vim.fn.sign_place(sign_id, config.sign.group, config.sign.name, bufnr, { lnum = lnum })
 end
 
 ---@param bufnr integer
 ---@param lnum integer
-function M.delete_sign(bufnr, lnum)
+function M.delete(bufnr, lnum)
     local signs = get_signs(bufnr, lnum)
     core.list.each(signs, function(sign)
         vim.fn.sign_unplace(config.sign.group, { buffer = bufnr, id = sign.id })

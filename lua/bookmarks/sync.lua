@@ -11,22 +11,8 @@ function M.sync_bookmarks_to_signs()
 
     local bookmarks = bookmark.get_bookmarks()
     core.list.each(bookmarks, function(b)
-        sign.add_sign(b.bufnr, b.lnum)
+        sign.add(b.bufnr, b.lnum)
     end)
-end
-
----@param bufnr integer
----@param lnum number
-function M.add(bufnr, lnum)
-    sign.add_sign(bufnr, lnum)
-    bookmark.add_bookmark(bufnr, lnum)
-end
-
----@param bufnr integer
----@param lnum number
-function M.delete(bufnr, lnum)
-    sign.delete_sign(bufnr, lnum)
-    bookmark.delete_bookmark(bufnr, lnum)
 end
 
 function M.write()

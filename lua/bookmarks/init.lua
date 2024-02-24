@@ -17,9 +17,11 @@ function M.toggle()
     local bufnr = vim.api.nvim_get_current_buf()
 
     if sign.has_signs(bufnr, lnum) then
-        sync.delete(bufnr, lnum)
+        sign.delete(bufnr, lnum)
+        bookmark.delete(bufnr, lnum)
     else
-        sync.add(bufnr, lnum)
+        sign.add(bufnr, lnum)
+        bookmark.add(bufnr, lnum)
     end
 end
 
