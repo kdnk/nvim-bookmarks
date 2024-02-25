@@ -20,7 +20,7 @@ local function bookmark_picker(opts)
 
     ---@type { filename: string, lnum: number, bufnr: integer, index: integer }[]
     local marklist = {}
-    core.list.each(bs, function(b, i)
+    core.lua.list.each(bs, function(b, i)
         table.insert(marklist, {
             filename = b.filename,
             lnum = b.lnum,

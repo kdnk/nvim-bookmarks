@@ -12,7 +12,7 @@ local M = {}
 local bookmarks = {}
 
 function M.update_bufnr()
-    core.list.each(bookmarks, function(bookmark)
+    core.lua.list.each(bookmarks, function(bookmark)
         local bufnr = vim.fn.bufadd(bookmark.filename)
         bookmark.bufnr = bufnr
     end)
@@ -22,7 +22,7 @@ end
 ---@param lnum number
 ---@return boolean
 function M.exists(bufnr, lnum)
-    return core.list.includes(bookmarks, function(b)
+    return core.lua.list.includes(bookmarks, function(b)
         return b.bufnr == bufnr and b.lnum == lnum
     end)
 end
@@ -63,21 +63,21 @@ end
 function M.list()
     M.update_bufnr()
 
-    local filenames = core.list.uniq(core.list.map(bookmarks, function(bookmark)
+    local filenames = core.lua.list.uniq(core.lua.list.map(bookmarks, function(bookmark)
         return bookmark.filename
     end))
 
     local new_bookmarks = {}
-    core.list.each(filenames, function(filename)
-        local bs = core.list.sort(
-            core.list.filter(bookmarks, function(bookmark)
+    core.lua.list.each(filenames, function(filename)
+        local bs = core.lua.list.sort(
+            core.lua.list.filter(bookmarks, function(bookmark)
                 return bookmark.filename == filename
             end),
             function(prev, next)
                 return prev.lnum > next.lnum
             end
         )
-        core.list.each(bs, function(bookmark)
+        core.lua.list.each(bs, function(bookmark)
             table.insert(new_bookmarks, bookmark)
         end)
     end)
@@ -102,7 +102,7 @@ end
 ---@return nil
 function M.delete(bufnr, lnum)
     local filename = vim.api.nvim_buf_get_name(bufnr)
-    core.list.each(bookmarks, function(bookmark, index)
+    core.lua.list.each(bookmarks, function(bookmark, index)
         if bookmark.filename == filename and bookmark.lnum == lnum then
             table.remove(bookmarks, index)
         end

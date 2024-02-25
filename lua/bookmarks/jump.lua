@@ -47,10 +47,10 @@ end
 local function get_neighboring_bookmarks(filename, lnum)
     local bookmarks = bookmark.list()
 
-    local prev = core.list.find_last_index(bookmarks, function(b)
+    local prev = core.lua.list.find_last_index(bookmarks, function(b)
         return filename == b.filename and b.lnum < lnum
     end)
-    local next = core.list.find_index(bookmarks, function(b)
+    local next = core.lua.list.find_index(bookmarks, function(b)
         return b.filename == filename and lnum < b.lnum
     end)
 

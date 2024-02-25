@@ -8,7 +8,7 @@ function M.bookmarks_to_signs()
     sign.remove_all()
 
     local bookmarks = bookmark.list()
-    core.list.each(bookmarks, function(b)
+    core.lua.list.each(bookmarks, function(b)
         sign.add(b.bufnr, b.lnum)
     end)
 end

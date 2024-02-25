@@ -17,7 +17,7 @@ local M = {}
 local function get_signs(bufnr, lnum)
     local signs = vim.fn.sign_getplaced(bufnr, { group = config.sign.group, lnum = lnum })[1]["signs"] --[[@as Sign]]
 
-    return core.list.filter(signs, function(sign)
+    return core.lua.list.filter(signs, function(sign)
         return sign.lnum == lnum
     end)
 end
@@ -33,7 +33,7 @@ end
 ---@param lnum integer
 function M.delete(bufnr, lnum)
     local signs = get_signs(bufnr, lnum)
-    core.list.each(signs, function(sign)
+    core.lua.list.each(signs, function(sign)
         vim.fn.sign_unplace(config.sign.group, { buffer = bufnr, id = sign.id })
     end)
 end

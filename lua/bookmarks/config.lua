@@ -19,7 +19,7 @@ local default_config = {
 function M.setup(opts)
     local new_conf = vim.tbl_deep_extend("keep", opts or {}, default_config)
 
-    core.table.each(new_conf, function(k, v)
+    core.lua.table.each(new_conf, function(k, v)
         M[k] = v
     end)
 
