@@ -1,8 +1,16 @@
-# bookmarks.lua
+# Table of Contents
 
-## Installation & Configuration
+- [Table of Contents](#table-of-contents)
+- [Installation & Configuration](#installation--configuration)
+  - [lazy.nvim](#lazynvim)
+- [Integration](#integration)
+  - [lualine](#lualine)
+  - [Telescope](#telescope)
+  - [Thanks & Inspired](#thanks--inspired)
 
-### lazy.nvim
+# Installation & Configuration
+
+## lazy.nvim
 
 ```lua
 return {
@@ -45,9 +53,9 @@ return {
 }
 ```
 
-## Integration
+# Integration
 
-### lualine
+## lualine
 
 ```lua
 local function bookmark_count()
@@ -63,7 +71,7 @@ require("lualine").setup({
 })
 ```
 
-### Telescope
+## Telescope
 
 ```lua
 require("telescope").load_extension("bookmarks")
