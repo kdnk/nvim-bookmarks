@@ -8,6 +8,22 @@
   - [Telescope](#telescope)
   - [Thanks & Inspired](#thanks--inspired)
 
+    -   [lualine](#lualine)
+    -   [Telescope](#telescope)
+    -   [Thanks & Inspired](#thanks--inspired)
+
+        -   [lualine](#lualine)
+        -   [Telescope](#telescope)
+        -   [Thanks & Inspired](#thanks--inspired)
+
+-   [Table of Contents](#table-of-contents)
+-   [Installation & Configuration](#installation--configuration)
+    -   [lazy.nvim](#lazynvim)
+-   [Integration](#integration)
+    -   [lualine](#lualine)
+    -   [Telescope](#telescope)
+    -   [Thanks & Inspired](#thanks--inspired)
+
 # Installation & Configuration
 
 ## lazy.nvim
@@ -21,7 +37,8 @@ return {
         bm.setup({
             persist = {
                 enable = true,
-                path = "./.bookmarks.json",
+                path = "./.bookmarks", -- .bookmarks.json will be created.
+                per_branch = false,  -- store backup per branch.
             },
             sign = {
                 group = "Bookmark",
