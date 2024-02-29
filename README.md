@@ -1,30 +1,11 @@
 # Table of Contents
 
 - [Table of Contents](#table-of-contents)
-- [Installation & Configuration](#installation--configuration)
   - [lazy.nvim](#lazynvim)
 - [Integration](#integration)
   - [lualine](#lualine)
   - [Telescope](#telescope)
-  - [Thanks & Inspired](#thanks--inspired)
-
-    -   [lualine](#lualine)
-    -   [Telescope](#telescope)
-    -   [Thanks & Inspired](#thanks--inspired)
-
-        -   [lualine](#lualine)
-        -   [Telescope](#telescope)
-        -   [Thanks & Inspired](#thanks--inspired)
-
--   [Table of Contents](#table-of-contents)
--   [Installation & Configuration](#installation--configuration)
-    -   [lazy.nvim](#lazynvim)
--   [Integration](#integration)
-    -   [lualine](#lualine)
-    -   [Telescope](#telescope)
-    -   [Thanks & Inspired](#thanks--inspired)
-
-# Installation & Configuration
+  - [Credit](#credit)
 
 ## lazy.nvim
 
@@ -37,8 +18,8 @@ return {
         bm.setup({
             persist = {
                 enable = true,
-                path = "./.bookmarks", -- .bookmarks.json will be created.
-                per_branch = false,  -- store backup per branch.
+                dir = "./.bookmarks", -- dir to store backup json files for bookmarks
+                per_branch = true,  -- store backup per branch.
             },
             sign = {
                 group = "Bookmark",
@@ -92,11 +73,10 @@ require("lualine").setup({
 
 ```lua
 require("telescope").load_extension("bookmarks")
-vim.keymap.set("n", "<leader>b", function() require("telescope").extensions.bookmarks.list() end, { silent = true })
+vim.keymap.set("n", "<leader>b", function() require("telescope").extensions.bookmarks.list() end)
 ```
 
-## Thanks & Inspired
+## Credit
 
 -   https://github.com/niuiic/core.nvim
-    -   Most of utility functions come from the repository.
 -   https://github.com/MattesGroeger/vim-bookmarks
