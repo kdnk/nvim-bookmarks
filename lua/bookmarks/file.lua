@@ -25,6 +25,20 @@ function M.json_read(filename)
 end
 
 function M.json_write(json, filename)
+    local function get_directory_part(path)
+        return path:match("(.+)/[^/]*$")
+    end
+
+    local function mkdir_p(path)
+        if path and #path > 0 then
+            local success, err = os.execute('mkdir -p "' .. path .. '"')
+            if not success then
+                vim.api.nvim_echo({ { "Error creating directory: " .. err, "WarningMsg" } }, true, {})
+            end
+        end
+    end
+
+    mkdir_p(get_directory_part(filename))
     vim.fn.writefile(json, filename)
 end
 

@@ -4,7 +4,7 @@ local M = {}
 local default_config = {
     persist = {
         enable = true,
-        path = "./.bookmarks",
+        dir = "./.bookmarks",
         per_branch = true,
     },
     sign = {

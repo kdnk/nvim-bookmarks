@@ -5,19 +5,12 @@ local sync = require("bookmarks.sync")
 
 local M = {}
 
-local function escape_branch(branch)
-    local escaped_branch = branch:gsub("([ %(%)%&%$%#%{%}%[%]%*%?%'\"\\])", "\\%1")
-    escaped_branch = escaped_branch:gsub("%s", "\\ ")
-    escaped_branch = escaped_branch:gsub("/", "+")
-    return escaped_branch
-end
-
 local function persist_path()
     local branch = vim.fn.systemlist("git branch --show-current")[1] or ""
     if config.persist.per_branch then
-        return config.persist.path .. "-" .. escape_branch(branch) .. ".json"
+        return config.persist.dir .. "/" .. branch .. ".json"
     else
-        return config.persist.path .. ".json"
+        return config.persist.dir .. "/" .. "bookmarks.json"
     end
 end
 
@@ -34,7 +27,8 @@ function M.restore()
         return {}
     end
 
-    if not file.exists(config.persist.path) then
+    if not file.exists(config.persist.dir) then
+        vim.api.nvim_echo({ { "config.persist.dir is not configured.", "WarningMsg" } }, true, {})
         return {}
     end
 
