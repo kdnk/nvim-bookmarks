@@ -22,8 +22,6 @@ return {
                 per_branch = true,  -- store backup per branch.
             },
             sign = {
-                group = "Bookmark",
-                name = "Bookmark",
                 text = "⚑",
             },
         })
