@@ -32,6 +32,11 @@ function M.restore()
         return {}
     end
 
+    if not file.exists(persist_path()) then
+        vim.api.nvim_echo({ { "persist_path doesn't exist.", "WarningMsg" } }, true, {})
+        return {}
+    end
+
     vim.schedule(function()
         local json = file.json_read(persist_path())
         local bookmarks = bookmark.fromJson(json)
