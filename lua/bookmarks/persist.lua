@@ -10,7 +10,7 @@ local function persist_path()
     if config.persist.per_branch then
         return config.persist.dir .. "/" .. branch .. ".json"
     else
-        return config.persist.dir .. "/" .. "bookmarks.json"
+        return config.persist.dir .. "/" .. ".bookmarks.json"
     end
 end
 
