@@ -1,13 +1,13 @@
 # Table of Contents
 
 - [Table of Contents](#table-of-contents)
-  - [lazy.nvim](#lazynvim)
+- [Installation & Configuration](#installation--configuration)
 - [Integration](#integration)
   - [lualine](#lualine)
   - [Telescope](#telescope)
-  - [Credit](#credit)
+- [Credit](#credit)
 
-## lazy.nvim
+# Installation & Configuration
 
 ```lua
 return {
@@ -76,7 +76,7 @@ require("telescope").load_extension("bookmarks")
 vim.keymap.set("n", "<leader>b", function() require("telescope").extensions.bookmarks.list() end)
 ```
 
-## Credit
+# Credit
 
 -   https://github.com/niuiic/core.nvim
 -   https://github.com/MattesGroeger/vim-bookmarks
