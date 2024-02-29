@@ -4,7 +4,8 @@ local M = {}
 local default_config = {
     persist = {
         enable = true,
-        path = "./.bookmarks.json",
+        dir = "./.bookmarks",
+        per_branch = true,
     },
     sign = {
         group = "Bookmark",
