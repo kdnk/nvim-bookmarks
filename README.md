@@ -1,37 +1,50 @@
 # Table of Contents
 
 - [Table of Contents](#table-of-contents)
-- [Installation & Configuration](#installation--configuration)
+- [Installation](#installation)
+    - [lazy.nvim](#lazynvim)
+- [Configuration](#configuration)
 - [Integration](#integration)
-  - [lualine](#lualine)
-  - [Telescope](#telescope)
+    - [lualine](#lualine)
+    - [Telescope](#telescope)
 - [Credit](#credit)
 
-# Installation & Configuration
+# Installation
+
+## [lazy.nvim](https://github.com/folke/lazy.nvim)
 
 ```lua
 return {
-    "kdnk/bookmarks.lua",
+    "kdnk/bookmarks.nvim",
+}
+```
+
+# Configuration
+
+```lua
+return {
+    "kdnk/bookmarks.nvim",
     config = function()
         local bm = require("bookmarks")
 
         bm.setup({
             persist = {
                 enable = true,
-                dir = "./.bookmarks", -- dir to store backup json files for bookmarks
-                per_branch = true,  -- store backup per branch.
+                dir = "./.bookmarks", -- directory to store json file for backup. Please add `**/.bookmarks/*` to your `.gitignore_global`.
+                per_branch = true, -- store backup file for each branch
             },
             sign = {
                 text = "⚑",
             },
         })
 
-        vim.keymap.set("n", "mm", bm.toggle)
-        vim.keymap.set("n", "<C-,>", bm.jump_prev)
-        vim.keymap.set("n", "<C-.>", bm.jump_next)
-        vim.keymap.set("n", "mx", bm.reset)
-        vim.keymap.set("n", "mr", bm.restore)
+        vim.keymap.set("n", "mm", bm.toggle) -- toggle bookmark at current line
+        vim.keymap.set("n", "<C-,>", bm.jump_prev) -- jump to the previous bookmark over buffers
+        vim.keymap.set("n", "<C-.>", bm.jump_next) -- jump to the next bookmark over buffers
+        vim.keymap.set("n", "mx", bm.reset) -- remove all bookmarks
+        vim.keymap.set("n", "mr", bm.restore) -- restore bookmarks from the json backup file
 
+        -- autocmd to restore bookmarks from the json backup file
         local bookmarkGroup = vim.api.nvim_create_augroup("bookmark_auto_restore", {})
         vim.api.nvim_create_autocmd("VimLeave", {
             callback = function()
