@@ -23,6 +23,7 @@ function M.toggle()
         sign.add(bufnr, lnum)
         bookmark.add(bufnr, lnum)
     end
+    persist.backup()
 end
 
 function M.jump_next()
