@@ -1,13 +1,13 @@
 # Table of Contents
 
-- [Table of Contents](#table-of-contents)
-- [Installation](#installation)
-    - [lazy.nvim](#lazynvim)
-- [Configuration](#configuration)
-- [Integration](#integration)
-    - [lualine](#lualine)
-    - [Telescope](#telescope)
-- [Credit](#credit)
+-   [Table of Contents](#table-of-contents)
+-   [Installation](#installation)
+    -   [lazy.nvim](#lazynvim)
+-   [Configuration](#configuration)
+-   [Integration](#integration)
+    -   [lualine](#lualine)
+    -   [Telescope](#telescope)
+-   [Credit](#credit)
 
 # Installation
 
@@ -46,12 +46,6 @@ return {
 
         -- autocmd to restore bookmarks from the json backup file
         local bookmarkGroup = vim.api.nvim_create_augroup("bookmark_auto_restore", {})
-        vim.api.nvim_create_autocmd("VimLeave", {
-            callback = function()
-                bm.backup()
-            end,
-            group = bookmarkGroup,
-        })
         vim.api.nvim_create_autocmd({ "VimEnter", "SessionLoadPost" }, {
             callback = function()
                 bm.restore()
