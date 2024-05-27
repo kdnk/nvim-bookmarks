@@ -33,7 +33,6 @@ function M.restore()
     end
 
     if not file.exists(persist_path()) then
-        vim.api.nvim_echo({ { "persist_path doesn't exist.", "WarningMsg" } }, true, {})
         return {}
     end
 
