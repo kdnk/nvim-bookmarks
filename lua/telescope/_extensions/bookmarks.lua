@@ -46,7 +46,7 @@ local function bookmark_picker(opts)
 
     pickers
         .new(opts, {
-            prompt_title = "bookmarks.lua",
+            prompt_title = "nvim-bookmarks",
             finder = finders.new_table({
                 results = marklist,
                 entry_maker = function(entry)

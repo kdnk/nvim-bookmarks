@@ -15,7 +15,7 @@
 
 ```lua
 return {
-    "kdnk/bookmarks.nvim",
+    "kdnk/nvim-bookmarks",
 }
 ```
 
@@ -23,7 +23,7 @@ return {
 
 ```lua
 return {
-    "kdnk/bookmarks.nvim",
+    "kdnk/nvim-bookmarks",
     config = function()
         local bm = require("bookmarks")
 
