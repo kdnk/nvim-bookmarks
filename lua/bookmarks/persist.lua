@@ -28,7 +28,7 @@ function M.restore()
     end
 
     if not file.exists(config.persist.dir) then
-        vim.api.nvim_echo({ { "config.persist.dir is not configured.", "WarningMsg" } }, true, {})
+        -- vim.api.nvim_echo({ { "config.persist.dir is not configured.", "WarningMsg" } }, true, {})
         return {}
     end
 
