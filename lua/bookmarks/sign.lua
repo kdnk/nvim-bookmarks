@@ -26,7 +26,7 @@ end
 ---@param lnum number
 function M.add(bufnr, lnum)
     local sign_id = 0
-    vim.fn.sign_place(sign_id, config.sign.group, config.sign.name, bufnr, { lnum = lnum })
+    vim.fn.sign_place(sign_id, config.sign.group, config.sign.name, bufnr, { lnum = lnum, priority = 1000 })
 end
 
 ---@param bufnr integer
