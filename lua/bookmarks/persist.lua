@@ -36,13 +36,11 @@ function M.restore()
         return {}
     end
 
-    vim.schedule(function()
-        local json = file.json_read(persist_path())
-        local bookmarks = bookmark.fromJson(json)
-        bookmark.update_all(bookmarks)
+    local json = file.json_read(persist_path())
+    local bookmarks = bookmark.fromJson(json)
+    bookmark.update_all(bookmarks)
 
-        sync.bookmarks_to_signs()
-    end)
+    sync.bookmarks_to_signs()
 end
 
 return M
