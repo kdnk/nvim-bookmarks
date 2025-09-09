@@ -32,8 +32,12 @@ local function jump_cursor(opts)
         end
         return index
     end)
+    if index == -1 then return end
+
     local bookmarks = bookmark.list()
     local b = bookmarks[index]
+    if not b then return end
+
     vim.api.nvim_set_current_buf(b.bufnr)
     local win_id = vim.api.nvim_get_current_win()
     vim.api.nvim_win_set_cursor(win_id, { b.lnum, 0 })

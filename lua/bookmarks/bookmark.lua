@@ -32,9 +32,15 @@ end
 local function is_valid(index)
     local bs = M.list()
     local b = bs[index]
-    local max_lnum = file.get_max_lnum(b.filename)
+    local success, max_lnum = pcall(function()
+        return file.get_max_lnum(b.filename)
+    end)
 
-    return b.lnum <= max_lnum
+    if success then
+        return b.lnum <= max_lnum
+    else
+        return false
+    end
 end
 
 ---@param index integer
@@ -48,14 +54,19 @@ function M.sanitize(index, update_index)
     local bs = M.list()
     local b = bs[index]
 
-    M.delete(b.bufnr, b.lnum)
+    if b ~= nil then
+        M.delete(b.bufnr, b.lnum)
+    end
 
     index = update_index()
 
     if is_valid(index) then
         return index
-    else
+    elseif b then
         return M.sanitize(index, update_index)
+    else
+        -- noop
+        return -1
     end
 end
 
