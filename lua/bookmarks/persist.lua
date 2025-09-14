@@ -17,7 +17,7 @@ end
 function M.backup()
     if config.persist.enable then
         bookmark.update_bufnr()
-        local json = bookmark.toJson()
+        local json = bookmark.to_json()
         file.json_write(json, persist_path())
     end
 end
@@ -37,7 +37,7 @@ function M.restore()
     end
 
     local json = file.json_read(persist_path())
-    local bookmarks = bookmark.fromJson(json)
+    local bookmarks = bookmark.from_json(json)
     bookmark.update_all(bookmarks)
 
     sync.bookmarks_to_signs()

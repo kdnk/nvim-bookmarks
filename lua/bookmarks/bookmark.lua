@@ -27,10 +27,10 @@ function M.exists(bufnr, lnum)
     end)
 end
 
+---@param bs Bookmark[]
 ---@param index integer
 ---@return boolean
-local function is_valid(index)
-    local bs = M.list()
+local function is_valid(bs, index)
     local b = bs[index]
     local success, max_lnum = pcall(function()
         return file.get_max_lnum(b.filename)
@@ -43,11 +43,18 @@ local function is_valid(index)
     end
 end
 
+---@param bs Bookmark[]
+local function filter_valid_bookmarks(bs)
+    return core.lua.list.filter(bs, function(b, i)
+        return is_valid(bs, i)
+    end)
+end
+
 ---@param index integer
 ---@param update_index fun(): integer
 ---@return integer
 function M.sanitize(index, update_index)
-    if is_valid(index) then
+    if is_valid(M.list(), index) then
         return index
     end
 
@@ -60,7 +67,7 @@ function M.sanitize(index, update_index)
 
     index = update_index()
 
-    if is_valid(index) then
+    if is_valid(M.list(), index) then
         return index
     elseif b then
         return M.sanitize(index, update_index)
@@ -125,17 +132,20 @@ function M.remove_all()
 end
 
 ---@return any
-function M.toJson()
-    return { vim.json.encode(M.list()) }
+function M.to_json()
+    return { vim.json.encode(filter_valid_bookmarks(M.list())) }
 end
 
 ---@param json any[]
 ---@return Bookmark[]
-function M.fromJson(json)
+function M.from_json(json)
     if json == nil then
         return {}
     else
-        return vim.json.decode(json[1]) or {} --[[ @as Bookmark[] ]]
+        local bs = vim.json.decode(json[1]) or {} --[[ @as Bookmark[] ]]
+        return core.lua.list.filter(bs, function(_, i)
+            return is_valid(bs, i)
+        end)
     end
 end
 
