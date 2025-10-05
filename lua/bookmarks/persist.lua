@@ -41,6 +41,10 @@ function M.restore()
     bookmark.update_all(bookmarks)
 
     sync.bookmarks_to_signs()
+
+    if config.scrollbar.enable then
+        require("bookmarks.nvim-scrollbar").setup()
+    end
 end
 
 return M

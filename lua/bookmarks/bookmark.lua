@@ -113,6 +113,8 @@ end
 function M.add(bufnr, lnum)
     local filename = vim.api.nvim_buf_get_name(bufnr)
     table.insert(bookmarks, { filename = filename, bufnr = bufnr, lnum = lnum })
+
+    vim.api.nvim_exec_autocmds("User", { pattern = "BookmarkAdded" })
 end
 
 ---@param bufnr integer
@@ -125,6 +127,8 @@ function M.delete(bufnr, lnum)
             table.remove(bookmarks, index)
         end
     end)
+
+    vim.api.nvim_exec_autocmds("User", { pattern = "BookmarkDeleted" })
 end
 
 function M.remove_all()

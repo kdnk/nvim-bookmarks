@@ -1,0 +1,41 @@
+local config = require("bookmarks.config")
+local core = require("bookmarks.core")
+local bookmark = require("bookmarks.bookmark")
+
+local M = {}
+
+--- @param bufnr number
+local function render(bufnr) end
+
+function M.setup()
+    if not config.scrollbar.enable then
+        return
+    end
+
+    require("scrollbar.handlers").register("bookmarks", function(bufnr)
+        local filtered_bookmarks = core.lua.list.filter(bookmark.list(), function(b)
+            return b.bufnr == bufnr
+        end)
+        local marks = core.lua.list.map(filtered_bookmarks, function(b)
+            return {
+                line = b.lnum - 1,
+                text = config.scrollbar.text,
+                level = 100,
+            }
+        end)
+
+        return marks
+    end)
+
+    local i = 0
+    local group = vim.api.nvim_create_augroup("nvim-bookmarks.nvim-scrollbar", { clear = true })
+    vim.api.nvim_create_autocmd("User", {
+        pattern = { "BookmarkAdded", "BookmarkDeleted" },
+        callback = function()
+            require("scrollbar.handlers").show()
+        end,
+        group = group,
+    })
+end
+
+return M

@@ -7,6 +7,10 @@ local default_config = {
         dir = "./.bookmarks",
         per_branch = true,
     },
+    scrollbar = {
+        enable = false,
+        text = "🔖",
+    },
     sign = {
         group = "Bookmark",
         name = "Bookmark",
