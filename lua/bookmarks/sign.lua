@@ -4,11 +4,17 @@ local config = require("bookmarks.config")
 local M = {}
 
 ---@class Sign
+---@diagnostic disable-next-line: duplicate-doc-field
 ---@field group string
+---@diagnostic disable-next-line: duplicate-doc-field
 ---@field id integer
+---@diagnostic disable-next-line: duplicate-doc-field
 ---@field lnum number
+---@diagnostic disable-next-line: duplicate-doc-field
 ---@field bufnr integer
+---@diagnostic disable-next-line: duplicate-doc-field
 ---@field name string
+---@diagnostic disable-next-line: duplicate-doc-field
 ---@field priority number
 
 ---@param bufnr integer
