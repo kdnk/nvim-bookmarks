@@ -18,7 +18,8 @@ local default_config = {
     },
 }
 
----@alias Config { persist: boolean, serialize_path: string, sign: { group: string, name: string, text: string } }
+---@diagnostic disable-next-line: duplicate-doc-alias
+---@alias Config { persist: { enable: boolean, dir: string, per_branch: boolean }, serialize_path: string, sign: { group: string, name: string, text: string } }
 
 ---@param opts? Config
 function M.setup(opts)
