@@ -10,6 +10,7 @@ function M.reset()
     bookmark.remove_all()
     sign.remove_all()
     jump.reset_index()
+    persist.backup()
 end
 
 function M.toggle()
