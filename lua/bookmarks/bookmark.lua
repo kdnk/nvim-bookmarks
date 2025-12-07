@@ -146,7 +146,12 @@ function M.from_json(json)
     if json == nil then
         return {}
     else
-        local bs = vim.json.decode(json[1]) or {} --[[ @as Bookmark[] ]]
+        local success, bs = pcall(function()
+            return vim.json.decode(json[1]) or {} --[[ @as Bookmark[] ]]
+        end)
+        if not success then
+            return {}
+        end
         return core.lua.list.filter(bs, function(_, i)
             return is_valid(bs, i)
         end)
