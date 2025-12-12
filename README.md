@@ -27,6 +27,9 @@ return {
     config = function()
         local bm = require("bookmarks")
 
+        vim.api.nvim_set_hl(0, "BookmarkSignLine", { bg = "#223249" })
+        vim.api.nvim_set_hl(0, "BookmarkSignText", { fg = "#4e8ca2" })
+
         bm.setup({
             persist = {
                 enable = true,

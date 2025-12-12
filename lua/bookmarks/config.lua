@@ -9,12 +9,12 @@ local default_config = {
     },
     scrollbar = {
         enable = false,
-        text = "🔖",
+        text = "📘",
     },
     sign = {
         group = "Bookmark",
         name = "Bookmark",
-        text = "⚑",
+        text = " ⚑",
     },
 }
 
@@ -29,7 +29,10 @@ function M.setup(opts)
         M[k] = v
     end)
 
-    vim.fn.sign_define("Bookmark", { text = new_conf.sign.text })
+    vim.fn.sign_define(
+        "Bookmark",
+        { text = new_conf.sign.text, texthl = "BookmarkSignText", linehl = "BookmarkSignLine" }
+    )
 end
 
 return M
