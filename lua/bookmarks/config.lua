@@ -14,7 +14,7 @@ local default_config = {
     sign = {
         group = "Bookmark",
         name = "Bookmark",
-        text = " ⚑",
+        text = "⚑",
     },
 }
 
