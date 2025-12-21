@@ -9,7 +9,7 @@ local default_config = {
     },
     scrollbar = {
         enable = false,
-        text = "📘",
+        text = "⚑",
     },
     sign = {
         group = "Bookmark",

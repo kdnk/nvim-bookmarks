@@ -4,9 +4,6 @@ local bookmark = require("bookmarks.bookmark")
 
 local M = {}
 
---- @param bufnr number
-local function render(bufnr) end
-
 function M.setup()
     if not config.scrollbar.enable then
         return
@@ -21,13 +18,13 @@ function M.setup()
                 line = b.lnum - 1,
                 text = config.scrollbar.text,
                 level = 100,
+                type = "Info",
             }
         end)
 
         return marks
     end)
 
-    local i = 0
     local group = vim.api.nvim_create_augroup("nvim-bookmarks.nvim-scrollbar", { clear = true })
     vim.api.nvim_create_autocmd("User", {
         pattern = { "BookmarkAdded", "BookmarkDeleted" },
