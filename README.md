@@ -33,13 +33,16 @@ return {
         bm.setup({
             persist = {
                 enable = true,
-                dir = "./.bookmarks", -- directory to store json file for backup. Please add `**/.bookmarks/*` to your `.gitignore_global`.
                 per_branch = true, -- store backup file for each branch
             },
             sign = {
                 text = "⚑",
             },
         })
+
+        -- Bookmarks are automatically stored in Neovim's data directory:
+        -- vim.fn.stdpath("data") .. "/nvim-bookmarks/"
+        -- Each project gets its own subdirectory based on the project path
 
         vim.keymap.set("n", "mm", bm.toggle) -- toggle bookmark at current line
         vim.keymap.set("n", "<C-,>", bm.jump_prev) -- jump to the previous bookmark over buffers

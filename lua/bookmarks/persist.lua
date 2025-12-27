@@ -5,12 +5,36 @@ local sync = require("bookmarks.sync")
 
 local M = {}
 
+local function get_project_hash()
+    local cwd = vim.fn.getcwd()
+    local hash = vim.fn.sha256(cwd)
+    return hash:sub(1, 16)
+end
+
+local function get_base_dir()
+    local data_dir = vim.fn.stdpath("data")
+    local project_hash = get_project_hash()
+    return data_dir .. "/nvim-bookmarks/" .. project_hash
+end
+
+local function sanitize_branch_name(branch)
+    -- Replace filesystem-unsafe characters with underscores
+    -- This handles: / \ : * ? " < > |
+    return branch:gsub("[/\\:*?\"<>|]", "_")
+end
+
 local function persist_path()
-    local branch = vim.fn.systemlist("git branch --show-current")[1] or ""
+    local base_dir = get_base_dir()
+
     if config.persist.per_branch then
-        return config.persist.dir .. "/" .. branch .. ".json"
+        local branch = vim.fn.systemlist("git branch --show-current")[1] or ""
+        if branch == "" then
+            branch = "default"
+        end
+        branch = sanitize_branch_name(branch)
+        return base_dir .. "/" .. branch .. ".json"
     else
-        return config.persist.dir .. "/" .. ".bookmarks.json"
+        return base_dir .. "/bookmarks.json"
     end
 end
 
@@ -24,11 +48,6 @@ end
 
 function M.restore()
     if not config.persist.enable then
-        return {}
-    end
-
-    if not file.exists(config.persist.dir) then
-        -- vim.api.nvim_echo({ { "config.persist.dir is not configured.", "WarningMsg" } }, true, {})
         return {}
     end
 
