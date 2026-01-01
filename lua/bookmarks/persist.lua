@@ -61,6 +61,17 @@ function M.restore()
 
     sync.bookmarks_to_signs()
 
+    -- restore時に全てのバッファに対してextmarkを作成
+    vim.api.nvim_create_autocmd("BufEnter", {
+        once = false,
+        callback = function(args)
+            local bufnr = args.buf
+            if vim.api.nvim_buf_is_loaded(bufnr) then
+                sync.bookmarks_to_extmarks(bufnr)
+            end
+        end,
+    })
+
     if config.scrollbar.enable then
         require("bookmarks.nvim-scrollbar").setup()
     end

@@ -8,7 +8,6 @@
     "vim"
   ],
   "workspace.library": [
-    "~/.local/share/nvim/lazy",
-    "$VIMRUNTIME"
+    // "$VIMRUNTIME"
   ]
 }
