@@ -25,3 +25,7 @@ format:
 # Check code formatting with stylua
 lint:
     stylua --check .
+
+# Fix code formatting with stylua
+lint-fix:
+    stylua .

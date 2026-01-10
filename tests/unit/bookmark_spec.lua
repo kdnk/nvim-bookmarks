@@ -131,10 +131,10 @@ describe("bookmark", function()
         it("should return cached list when called multiple times without changes", function()
             mock.set_buf_name(1, "/test/file1.lua")
             bookmark.add(1, 10)
-            
+
             local bs1 = bookmark.list()
             local bs2 = bookmark.list()
-            
+
             -- bs1 and bs2 should be the same table instance if cached
             assert.are.equal(bs1, bs2)
         end)
@@ -222,7 +222,7 @@ describe("bookmark", function()
                 { bufnr = 1, lnum = 10, filename = "/test/file.lua" },
                 { bufnr = 2, lnum = 20, filename = "/test/file2.lua" },
             }
-            
+
             mock.set_buf_name(1, "/test/file.lua")
             mock.set_buf_name(2, "/test/file2.lua")
 

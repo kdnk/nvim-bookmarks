@@ -38,7 +38,7 @@ describe("toggle workflow (integration)", function()
                 name = name,
                 bufnr = bufnr,
                 lnum = opts.lnum,
-                priority = opts.priority
+                priority = opts.priority,
             })
             return 100 + #placed_signs
         end)
@@ -53,26 +53,28 @@ describe("toggle workflow (integration)", function()
                 end
             elseif opts and opts.buffer then
                 -- Remove all for buffer
-                 local i = 1
-                 while i <= #placed_signs do
-                     if placed_signs[i].bufnr == opts.buffer then
-                         table.remove(placed_signs, i)
-                     else
-                         i = i + 1
-                     end
-                 end
+                local i = 1
+                while i <= #placed_signs do
+                    if placed_signs[i].bufnr == opts.buffer then
+                        table.remove(placed_signs, i)
+                    else
+                        i = i + 1
+                    end
+                end
             else
-                 -- Remove all
-                 placed_signs = {}
+                -- Remove all
+                placed_signs = {}
             end
         end)
 
         stub(vim.fn, "sign_getplaced").invokes(function(bufnr, opts)
             local matches = {}
             for _, s in ipairs(placed_signs) do
-                if (not bufnr or s.bufnr == bufnr) and 
-                   (not opts or not opts.lnum or s.lnum == opts.lnum) and
-                   (not opts or not opts.group or s.group == opts.group) then
+                if
+                    (not bufnr or s.bufnr == bufnr)
+                    and (not opts or not opts.lnum or s.lnum == opts.lnum)
+                    and (not opts or not opts.group or s.group == opts.group)
+                then
                     table.insert(matches, s)
                 end
             end
@@ -90,7 +92,7 @@ describe("toggle workflow (integration)", function()
         stub(vim.api, "nvim_buf_del_extmark")
         stub(vim.api, "nvim_buf_get_extmark_by_id").returns({ 9, 0 })
         stub(vim.api, "nvim_buf_clear_namespace")
-        
+
         -- Stub cursor position
         stub(vim.api, "nvim_get_current_win").returns(1000)
         stub(vim.api, "nvim_win_get_cursor").returns({ 10, 0 })
@@ -108,7 +110,7 @@ describe("toggle workflow (integration)", function()
         extmark = require("bookmarks.extmark")
         persist = require("bookmarks.persist")
         config = require("bookmarks.config")
-        
+
         -- Setup plugin (registers autocmds)
         bm.setup()
     end)
@@ -285,10 +287,14 @@ describe("toggle workflow (integration)", function()
             -- Add bookmarks in multiple buffers
             mock.set_buf_name(1, "/test/file1.lua")
             mock.set_buf_name(2, "/test/file2.lua")
-            
+
             -- Mock buffer list
-            vim.api.nvim_list_bufs = function() return { 1, 2 } end
-            vim.api.nvim_buf_is_valid = function() return true end
+            vim.api.nvim_list_bufs = function()
+                return { 1, 2 }
+            end
+            vim.api.nvim_buf_is_valid = function()
+                return true
+            end
 
             bm.reset()
 

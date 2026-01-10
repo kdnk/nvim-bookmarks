@@ -93,11 +93,11 @@ describe("sync", function()
             local filename = "/test/file.lua"
             mock.set_buf_name(bufnr, filename)
             bookmark.add(bufnr, 10)
-            
+
             -- Find the added bookmark to get its ID
             local b = bookmark.find(bufnr, 10)
             assert.is_not_nil(b)
-            
+
             -- Set an extmark_id manually for testing
             bookmark.update_extmark_id(b.id, 1000)
 

@@ -181,7 +181,7 @@ describe("persist", function()
                 { filename = "/test/file.lua", bufnr = 1, lnum = 20 },
             })
             mock.set_file_contents(file_path, { json_data })
-            
+
             mock.set_buf_name(1, "/test/file.lua")
 
             persist.restore()
@@ -205,10 +205,7 @@ describe("persist", function()
 
             persist.restore()
 
-            assert.stub(s).was_called_with(
-                "User",
-                { pattern = "BookmarkRestored" }
-            )
+            assert.stub(s).was_called_with("User", { pattern = "BookmarkRestored" })
             s:revert()
         end)
     end)

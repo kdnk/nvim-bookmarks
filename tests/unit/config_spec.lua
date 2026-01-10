@@ -47,14 +47,11 @@ describe("config", function()
             config.setup()
 
             assert.stub(vim.fn.sign_define).was_called()
-            assert.stub(vim.fn.sign_define).was_called_with(
-                "Bookmark",
-                {
-                    text = "⚑",
-                    texthl = "BookmarkSignText",
-                    linehl = "BookmarkSignLine",
-                }
-            )
+            assert.stub(vim.fn.sign_define).was_called_with("Bookmark", {
+                text = "⚑",
+                texthl = "BookmarkSignText",
+                linehl = "BookmarkSignLine",
+            })
         end)
 
         it("should use custom sign text", function()
@@ -64,14 +61,11 @@ describe("config", function()
                 },
             })
 
-            assert.stub(vim.fn.sign_define).was_called_with(
-                "Bookmark",
-                {
-                    text = "🔖",
-                    texthl = "BookmarkSignText",
-                    linehl = "BookmarkSignLine",
-                }
-            )
+            assert.stub(vim.fn.sign_define).was_called_with("Bookmark", {
+                text = "🔖",
+                texthl = "BookmarkSignText",
+                linehl = "BookmarkSignLine",
+            })
         end)
 
         it("should warn on deprecated persist.dir", function()
@@ -93,156 +87,62 @@ describe("config", function()
         end)
     end)
 
-        describe("validation", function()
-
-            before_each(function()
-
-                -- Mock vim.notify to catch warnings
-
-                stub(vim, "notify")
-
-            end)
-
-    
-
-            after_each(function()
-
-                vim.notify:revert()
-
-            end)
-
-    
-
-            it("should accept valid config", function()
-
-                local opts = {
-
-                    persist = { enable = false },
-
-                    sign = { text = "B" }
-
-                }
-
-                config.setup(opts)
-
-                
-
-                assert.is_false(config.persist.enable)
-
-                assert.are.equal("B", config.sign.text)
-
-                assert.stub(vim.notify).was_not_called()
-
-            end)
-
-    
-
-                    it("should warn and use default on invalid boolean type", function()
-
-    
-
-                        local opts = {
-
-    
-
-                            persist = { enable = "true" } -- Invalid: string instead of boolean
-
-    
-
-                        }
-
-    
-
-                        config.setup(opts)
-
-    
-
-                        
-
-    
-
-                        assert.is_true(config.persist.enable) -- Should fallback to default true
-
-    
-
-                        assert.stub(vim.notify).was_called_with(
-
-    
-
-                            match.matches("%[nvim%-bookmarks%] .*must be a boolean"),
-
-    
-
-                            vim.log.levels.WARN,
-
-    
-
-                            nil
-
-    
-
-                        )
-
-    
-
-                    end)
-
-    
-
-            
-
-    
-
-                    it("should warn and use default on invalid string type", function()
-
-    
-
-                        local opts = {
-
-    
-
-                            sign = { text = 123 } -- Invalid: number instead of string
-
-    
-
-                        }
-
-    
-
-                        config.setup(opts)
-
-    
-
-                        
-
-    
-
-                        assert.are.equal("⚑", config.sign.text) -- Should fallback to default
-
-    
-
-                        assert.stub(vim.notify).was_called_with(
-
-    
-
-                            match.matches("%[nvim%-bookmarks%] .*must be a string"),
-
-    
-
-                            vim.log.levels.WARN,
-
-    
-
-                            nil
-
-    
-
-                        )
-
-    
-
-                    end)
-
+    describe("validation", function()
+        before_each(function()
+            -- Mock vim.notify to catch warnings
+
+            stub(vim, "notify")
         end)
 
+        after_each(function()
+            vim.notify:revert()
+        end)
+
+        it("should accept valid config", function()
+            local opts = {
+
+                persist = { enable = false },
+
+                sign = { text = "B" },
+            }
+
+            config.setup(opts)
+
+            assert.is_false(config.persist.enable)
+
+            assert.are.equal("B", config.sign.text)
+
+            assert.stub(vim.notify).was_not_called()
+        end)
+
+        it("should warn and use default on invalid boolean type", function()
+            local opts = {
+
+                persist = { enable = "true" }, -- Invalid: string instead of boolean
+            }
+
+            config.setup(opts)
+
+            assert.is_true(config.persist.enable) -- Should fallback to default true
+
+            assert
+                .stub(vim.notify)
+                .was_called_with(match.matches("%[nvim%-bookmarks%] .*must be a boolean"), vim.log.levels.WARN, nil)
+        end)
+
+        it("should warn and use default on invalid string type", function()
+            local opts = {
+
+                sign = { text = 123 }, -- Invalid: number instead of string
+            }
+
+            config.setup(opts)
+
+            assert.are.equal("⚑", config.sign.text) -- Should fallback to default
+
+            assert
+                .stub(vim.notify)
+                .was_called_with(match.matches("%[nvim%-bookmarks%] .*must be a string"), vim.log.levels.WARN, nil)
+        end)
     end)
+end)

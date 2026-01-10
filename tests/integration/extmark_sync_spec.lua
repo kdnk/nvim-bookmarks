@@ -50,7 +50,7 @@ describe("extmark sync (integration)", function()
         stub(vim.fn, "sign_unplace")
         stub(vim.fn, "sign_getplaced").returns({ { signs = {} } })
         stub(vim.fn, "sign_define")
-        
+
         -- Stub extmark APIs with state to simulate movement
         local extmarks = {}
         stub(vim.api, "nvim_create_namespace").returns(1)
@@ -61,9 +61,11 @@ describe("extmark sync (integration)", function()
         end)
         stub(vim.api, "nvim_buf_del_extmark")
         stub(vim.api, "nvim_buf_get_extmarks").returns({})
-        
+
         -- Stub bufadd/bufnr
-        stub(vim.fn, "bufadd").invokes(function(filename) return 1 end)
+        stub(vim.fn, "bufadd").invokes(function(filename)
+            return 1
+        end)
         stub(vim.fn, "bufnr").returns(1)
 
         -- Mock file module validation
@@ -79,7 +81,7 @@ describe("extmark sync (integration)", function()
         persist = require("bookmarks.persist")
         extmark = require("bookmarks.extmark")
         sync = require("bookmarks.sync")
-        
+
         -- Setup plugin
         config.setup()
         bm.setup()
@@ -98,16 +100,16 @@ describe("extmark sync (integration)", function()
 
         -- 1. Add a bookmark
         bookmark.add(bufnr, original_lnum)
-        
+
         -- Initial sync to assign extmark IDs
         sync.bookmarks_to_extmarks(bufnr)
-        
+
         -- Verify initial save
         print("TEST: expected path = " .. expected_path)
 
         -- Clear written files to verify next write
-        mock.clear_written_files() 
-        
+        mock.clear_written_files()
+
         -- 2. Simulate extmark movement
         -- Find the assigned extmark_id
         local bs = bookmark.list()
@@ -121,13 +123,13 @@ describe("extmark sync (integration)", function()
 
         -- 3. Trigger the sync (simulating TextChanged event)
         sync.extmarks_to_bookmarks(bufnr)
-        
+
         s:revert()
 
         -- 4. Verify persist.backup was called and file was updated
         local updated_write = mock.get_written_file(expected_path)
         assert.is_not_nil(updated_write, "persist.backup should have been called")
-        
+
         local updated_json = vim.json.decode(updated_write[1])
         assert.are.equal(new_lnum, updated_json[1].lnum, "Bookmark line number should be updated in JSON")
     end)

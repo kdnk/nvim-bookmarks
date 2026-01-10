@@ -9,7 +9,7 @@ end
 function M.sanitize_branch_name(branch)
     -- Replace filesystem-unsafe characters with underscores
     -- This handles: / \ : * ? " < > |
-    return branch:gsub("[/\\:*?\"<>|]", "_")
+    return branch:gsub('[/\\:*?"<>|]', "_")
 end
 
 function M.get_persist_path(per_branch)

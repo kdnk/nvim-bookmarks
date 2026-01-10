@@ -24,19 +24,25 @@ local default_config = {
 ---@return Bookmarks.Config
 local function validate_config(user_conf)
     local conf = vim.deepcopy(default_config)
-    
-    if not user_conf then return conf end
+
+    if not user_conf then
+        return conf
+    end
 
     -- Helper to validate and merge a single field
     local function check(path, key, type_str)
         local val = user_conf
         for _, p in ipairs(path) do
-            if type(val) ~= "table" then return end
+            if type(val) ~= "table" then
+                return
+            end
             val = val[p]
         end
-        
-        if val == nil then return end
-        
+
+        if val == nil then
+            return
+        end
+
         if type(val) == type_str then
             -- Navigate and set
             local target = conf
@@ -45,10 +51,9 @@ local function validate_config(user_conf)
             end
             target[path[#path]] = val
         else
-            notify.warn(string.format(
-                "Config error: '%s' must be a %s. Using default.",
-                table.concat(path, "."), type_str
-            ))
+            notify.warn(
+                string.format("Config error: '%s' must be a %s. Using default.", table.concat(path, "."), type_str)
+            )
         end
     end
 
@@ -57,7 +62,7 @@ local function validate_config(user_conf)
         check({ "persist", "enable" }, "enable", "boolean")
         check({ "persist", "per_branch" }, "per_branch", "boolean")
     end
-    
+
     if user_conf.sign then
         check({ "sign", "text" }, "text", "string")
         check({ "sign", "group" }, "group", "string")
@@ -78,7 +83,9 @@ function M.setup(opts)
 
     -- Warn if user is using deprecated persist.dir setting
     if opts and opts.persist and opts.persist.dir then
-        notify.warn("config.persist.dir is deprecated and will be ignored. Bookmarks are now stored in standard Neovim data directory.")
+        notify.warn(
+            "config.persist.dir is deprecated and will be ignored. Bookmarks are now stored in standard Neovim data directory."
+        )
     end
 
     for k, v in pairs(new_conf) do
