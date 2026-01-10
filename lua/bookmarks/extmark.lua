@@ -24,6 +24,14 @@ function M.clear_all(bufnr)
     vim.api.nvim_buf_clear_namespace(bufnr, ns_id, 0, -1)
 end
 
+function M.clear_all_buffers()
+    for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+        if vim.api.nvim_buf_is_valid(bufnr) then
+            M.clear_all(bufnr)
+        end
+    end
+end
+
 ---@param bufnr integer
 ---@param id integer
 ---@return number|nil lnum (1-indexed)

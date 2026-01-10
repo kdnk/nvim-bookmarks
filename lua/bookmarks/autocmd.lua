@@ -30,9 +30,7 @@ function M.setup()
         group = group,
         callback = function()
             local bufnr = vim.api.nvim_get_current_buf()
-            sync.bookmarks_to_signs()
-            sync.bookmarks_to_extmarks(bufnr)
-            persist.backup()
+            sync.refresh(bufnr)
         end,
     })
 
@@ -42,9 +40,7 @@ function M.setup()
         group = group,
         callback = function()
             local bufnr = vim.api.nvim_get_current_buf()
-            sync.bookmarks_to_signs()
-            sync.bookmarks_to_extmarks(bufnr)
-            persist.backup()
+            sync.refresh(bufnr)
         end,
     })
 

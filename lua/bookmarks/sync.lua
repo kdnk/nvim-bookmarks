@@ -1,8 +1,16 @@
 local bookmark = require("bookmarks.bookmark")
 local sign = require("bookmarks.sign")
 local extmark = require("bookmarks.extmark")
+local persist = require("bookmarks.persist")
 
 local M = {}
+
+---@param bufnr integer
+function M.refresh(bufnr)
+    M.bookmarks_to_signs()
+    M.bookmarks_to_extmarks(bufnr)
+    persist.backup()
+end
 
 function M.bookmarks_to_signs()
     bookmark.update_bufnr()

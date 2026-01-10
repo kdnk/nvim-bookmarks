@@ -11,11 +11,7 @@ local M = {}
 function M.reset()
     bookmark.remove_all()
     sign.remove_all()
-    for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-        if vim.api.nvim_buf_is_valid(bufnr) then
-            extmark.clear_all(bufnr)
-        end
-    end
+    extmark.clear_all_buffers()
     jump.reset_index()
     persist.backup()
 end
