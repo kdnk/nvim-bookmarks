@@ -2,14 +2,7 @@ local file = require("bookmarks.file")
 
 local M = {}
 
----@class Bookmark
----@field id string
----@field filename string
----@field bufnr integer
----@field lnum number
----@field extmark_id integer|nil
-
----@type Bookmark[]
+---@type Bookmarks.Bookmark[]
 local bookmarks = {}
 
 local function generate_id()
@@ -25,7 +18,7 @@ end
 
 ---@param bufnr integer
 ---@param lnum number
----@return Bookmark|nil
+---@return Bookmarks.Bookmark|nil
 function M.find(bufnr, lnum)
     local filename = vim.api.nvim_buf_get_name(bufnr)
     for _, b in ipairs(bookmarks) do
@@ -43,7 +36,7 @@ function M.exists(bufnr, lnum)
     return M.find(bufnr, lnum) ~= nil
 end
 
----@param b Bookmark
+---@param b Bookmarks.Bookmark
 ---@return boolean
 local function is_valid(b)
     if not b then
@@ -80,7 +73,7 @@ function M.sanitize(index, update_index)
     end
 end
 
----@return Bookmark[]
+---@return Bookmarks.Bookmark[]
 function M.list()
     -- Get unique filenames and group bookmarks by filename
     local grouped = {}
@@ -166,7 +159,7 @@ function M.to_json()
 end
 
 ---@param json any[]
----@return Bookmark[]
+---@return Bookmarks.Bookmark[]
 function M.from_json(json)
     if not json or not json[1] then
         return {}

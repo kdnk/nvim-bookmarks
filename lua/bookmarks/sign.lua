@@ -2,28 +2,14 @@ local config = require("bookmarks.config")
 
 local M = {}
 
----@class Sign
----@diagnostic disable-next-line: duplicate-doc-field
----@field group string
----@diagnostic disable-next-line: duplicate-doc-field
----@field id integer
----@diagnostic disable-next-line: duplicate-doc-field
----@field lnum number
----@diagnostic disable-next-line: duplicate-doc-field
----@field bufnr integer
----@diagnostic disable-next-line: duplicate-doc-field
----@field name string
----@diagnostic disable-next-line: duplicate-doc-field
----@field priority number
-
 ---@param bufnr integer
 ---@param lnum number
----@return Sign[]
+---@return Bookmarks.Sign[]
 local function get_signs(bufnr, lnum)
     if not bufnr or bufnr <= 0 then
         return {}
     end
-    local signs = vim.fn.sign_getplaced(bufnr, { group = config.sign.group, lnum = lnum })[1]["signs"] --[[@as Sign]]
+    local signs = vim.fn.sign_getplaced(bufnr, { group = config.sign.group, lnum = lnum })[1]["signs"] --[[@as Bookmarks.Sign]]
 
     return vim.tbl_filter(function(sign)
         return sign.lnum == lnum

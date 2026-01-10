@@ -1,11 +1,6 @@
 local M = {}
 
----@class Config
----@field persist { enable: boolean, per_branch: boolean }
----@field sign { group: string, name: string, text: string }
----@field scrollbar { enable: boolean, text: string }
-
----@type Config
+---@type Bookmarks.Config
 local default_config = {
     persist = {
         enable = true,
@@ -23,7 +18,7 @@ local default_config = {
 }
 
 ---@param user_conf table
----@return Config
+---@return Bookmarks.Config
 local function validate_config(user_conf)
     local conf = vim.deepcopy(default_config)
     
@@ -74,7 +69,7 @@ local function validate_config(user_conf)
     return conf
 end
 
----@param opts? Config
+---@param opts? Bookmarks.Config
 function M.setup(opts)
     local new_conf = validate_config(opts)
 
