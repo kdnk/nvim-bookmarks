@@ -5,6 +5,9 @@ local M = {}
 ---@type Bookmarks.Bookmark[]
 local bookmarks = {}
 
+---@type Bookmarks.Bookmark[]|nil
+local cached_list = nil
+
 local function generate_id()
     return tostring(os.time()) .. "-" .. tostring(math.random(100000, 999999))
 end
@@ -70,6 +73,10 @@ end
 
 ---@return Bookmarks.Bookmark[]
 function M.list()
+    if cached_list then
+        return cached_list
+    end
+
     -- Get unique filenames and group bookmarks by filename
     local grouped = {}
     local filenames = {}
@@ -94,11 +101,13 @@ function M.list()
         end
     end
 
-    return new_bookmarks
+    cached_list = new_bookmarks
+    return cached_list
 end
 
 function M.update_all(bs)
     bookmarks = vim.deepcopy(bs)
+    cached_list = nil
 end
 
 ---@param id string
@@ -107,6 +116,7 @@ function M.update_lnum(id, new_lnum)
     for _, b in ipairs(bookmarks) do
         if b.id == id then
             b.lnum = new_lnum
+            cached_list = nil
             return
         end
     end
@@ -118,6 +128,7 @@ function M.update_extmark_id(id, extmark_id)
     for _, b in ipairs(bookmarks) do
         if b.id == id then
             b.extmark_id = extmark_id
+            cached_list = nil
             return
         end
     end
@@ -132,6 +143,7 @@ function M.add(bufnr, lnum)
         lnum = lnum,
     })
 
+    cached_list = nil
     vim.api.nvim_exec_autocmds("User", { pattern = "BookmarkAdded" })
 end
 
@@ -140,6 +152,7 @@ function M.delete_by_id(id)
     for i, b in ipairs(bookmarks) do
         if b.id == id then
             table.remove(bookmarks, i)
+            cached_list = nil
             vim.api.nvim_exec_autocmds("User", { pattern = "BookmarkDeleted" })
             return
         end
@@ -158,6 +171,7 @@ end
 
 function M.remove_all()
     bookmarks = {}
+    cached_list = nil
 end
 
 function M.to_json()

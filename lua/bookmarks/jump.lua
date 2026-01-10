@@ -1,4 +1,5 @@
 local bookmark = require("bookmarks.bookmark")
+local notify = require("bookmarks.notify")
 
 local M = {}
 
@@ -53,10 +54,7 @@ function M.jump(opts)
         local line_count = vim.api.nvim_buf_line_count(bufnr)
         if b.lnum > line_count then
             bookmark.delete(bufnr, b.lnum)
-            vim.notify(
-                "Bookmark at line " .. b.lnum .. " removed because the line was deleted.",
-                vim.log.levels.WARN
-            )
+            notify.warn("Bookmark at line " .. b.lnum .. " removed because the line was deleted.")
             return
         end
 

@@ -124,8 +124,44 @@ describe("bookmark", function()
 
     describe("list", function()
         it("should return empty list when no bookmarks", function()
-            local list = bookmark.list()
-            assert.are.same({}, list)
+            local bs = bookmark.list()
+            assert.are.equal(0, #bs)
+        end)
+
+        it("should return cached list when called multiple times without changes", function()
+            mock.set_buf_name(1, "/test/file1.lua")
+            bookmark.add(1, 10)
+            
+            local bs1 = bookmark.list()
+            local bs2 = bookmark.list()
+            
+            -- bs1 and bs2 should be the same table instance if cached
+            assert.are.equal(bs1, bs2)
+        end)
+
+        it("should refresh cache when bookmarks are modified", function()
+            mock.set_buf_name(1, "/test/file1.lua")
+            bookmark.add(1, 10)
+            local bs1 = bookmark.list()
+
+            -- Add a new bookmark
+            bookmark.add(1, 20)
+            local bs2 = bookmark.list()
+            assert.are_not.equal(bs1, bs2)
+            assert.are.equal(2, #bs2)
+
+            -- Delete a bookmark
+            bookmark.delete(1, 10)
+            local bs3 = bookmark.list()
+            assert.are_not.equal(bs2, bs3)
+            assert.are.equal(1, #bs3)
+
+            -- Update lnum (simulate external change)
+            local b = bs3[1]
+            bookmark.update_lnum(b.id, 30)
+            local bs4 = bookmark.list()
+            assert.are_not.equal(bs3, bs4)
+            assert.are.equal(30, bs4[1].lnum)
         end)
 
         it("should return bookmarks sorted by lnum descending", function()
