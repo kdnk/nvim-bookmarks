@@ -41,6 +41,7 @@ describe("navigation workflow (integration)", function()
         stub(vim.api, "nvim_win_set_cursor").invokes(function(win, pos)
             cursor_position = pos
         end)
+        stub(vim.api, "nvim_buf_line_count").returns(1000)
         stub(vim.fn, "bufadd").invokes(function(filename)
             local bufnr = tonumber(filename:match("file(%d+)%.lua"))
             return bufnr or 1

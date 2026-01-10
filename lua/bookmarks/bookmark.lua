@@ -46,26 +46,6 @@ local function is_valid(b)
     return success and b.lnum <= max_lnum
 end
 
----@param index integer
----@param update_index fun(): integer
----@return integer
-function M.sanitize(index, update_index)
-    while true do
-        local bs = M.list()
-        local b = bs[index]
-        if not b then
-            return -1
-        end
-
-        if is_valid(b) then
-            return index
-        end
-
-        M.delete(b.bufnr, b.lnum)
-        index = update_index()
-    end
-end
-
 ---@param bufnr integer
 ---@return Bookmarks.Bookmark[]
 function M.get_by_bufnr(bufnr)
