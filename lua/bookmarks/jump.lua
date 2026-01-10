@@ -43,7 +43,13 @@ function M.jump(opts)
 
     local b = bs[target_index]
     if b then
-        vim.api.nvim_set_current_buf(b.bufnr)
+        local bufnr = b.bufnr
+        if not vim.api.nvim_buf_is_valid(bufnr) then
+            bufnr = vim.fn.bufadd(b.filename)
+            vim.fn.bufload(bufnr)
+            b.bufnr = bufnr
+        end
+        vim.api.nvim_set_current_buf(bufnr)
         local win_id = vim.api.nvim_get_current_win()
         vim.api.nvim_win_set_cursor(win_id, { b.lnum, 0 })
     end

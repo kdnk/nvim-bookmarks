@@ -9,10 +9,13 @@ local autocmd = require("bookmarks.autocmd")
 local M = {}
 
 function M.reset()
--- ... (rest of functions)
     bookmark.remove_all()
     sign.remove_all()
-    extmark.clear_all()
+    for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+        if vim.api.nvim_buf_is_valid(bufnr) then
+            extmark.clear_all(bufnr)
+        end
+    end
     jump.reset_index()
     persist.backup()
 end

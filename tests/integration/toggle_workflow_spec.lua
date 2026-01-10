@@ -279,4 +279,22 @@ describe("toggle workflow (integration)", function()
             assert.stub(vim.api.nvim_buf_clear_namespace).was_called() -- Position tracking layer
         end)
     end)
+
+    describe("reset", function()
+        it("should clear all bookmarks and not crash with multiple buffers", function()
+            -- Add bookmarks in multiple buffers
+            mock.set_buf_name(1, "/test/file1.lua")
+            mock.set_buf_name(2, "/test/file2.lua")
+            
+            -- Mock buffer list
+            vim.api.nvim_list_bufs = function() return { 1, 2 } end
+            vim.api.nvim_buf_is_valid = function() return true end
+
+            bm.reset()
+
+            -- Verify clear_all was called for each buffer
+            assert.stub(vim.api.nvim_buf_clear_namespace).was_called_with(1, 123, 0, -1)
+            assert.stub(vim.api.nvim_buf_clear_namespace).was_called_with(2, 123, 0, -1)
+        end)
+    end)
 end)

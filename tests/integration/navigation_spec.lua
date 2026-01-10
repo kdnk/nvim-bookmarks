@@ -238,5 +238,33 @@ describe("navigation workflow (integration)", function()
             bm.jump_next()
             assert.are.equal(positions[1], cursor_position[1])
         end)
+
+        it("should load buffer if jumping to unloaded file", function()
+            local filename = "/test/unloaded.lua"
+            -- Force bufadd to return a new buffer number (e.g. 10)
+            local new_bufnr = 10
+            stub(vim.fn, "bufadd").returns(new_bufnr)
+            stub(vim.fn, "bufload")
+            
+            -- Add bookmark manually (bypass M.add to simulate unloaded state where bufnr might be invalid/old)
+            -- But we use bookmark.add which uses bufadd?
+            -- No, let's inject a bookmark with bufnr = -1
+            local bookmark_mod = require("bookmarks.bookmark")
+            -- We need to access the internal list or use update_all
+            bookmark_mod.update_all({
+                { id = "test-id", filename = filename, bufnr = -1, lnum = 5 }
+            })
+            
+            -- Set current buffer to something else
+            mock.set_buf_name(1, "/test/current.lua")
+            vim.api.nvim_set_current_buf(1)
+
+            bm.jump_next()
+
+            -- Verify buffer was loaded and jumped to
+            assert.stub(vim.fn.bufadd).was_called_with(filename)
+            assert.stub(vim.fn.bufload).was_called_with(new_bufnr)
+            assert.are.equal(new_bufnr, current_bufnr)
+        end)
     end)
 end)

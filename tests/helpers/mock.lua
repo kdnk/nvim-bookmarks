@@ -44,6 +44,9 @@ function M.setup_vim_api()
         -- but returning -1 is safer for "not found"
         return -1 
     end)
+
+    -- Stub vim.fn.bufload
+    M._stubs.bufload = stub(vim.fn, "bufload")
 end
 
 -- Set the return value for nvim_buf_get_name
