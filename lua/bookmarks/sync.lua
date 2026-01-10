@@ -24,7 +24,7 @@ function M.bookmarks_to_extmarks(bufnr)
     for _, b in ipairs(bookmarks) do
         if b.filename == filename then
             local id = extmark.add(bufnr, b.lnum)
-            bookmark.update_extmark_id(filename, b.lnum, id)
+            bookmark.update_extmark_id(b.id, id)
         end
     end
 end
@@ -40,7 +40,7 @@ function M.extmarks_to_bookmarks(bufnr)
             local new_lnum = extmark.get_lnum(bufnr, b.extmark_id)
             if new_lnum and new_lnum ~= b.lnum then
                 local old_lnum = b.lnum
-                b.lnum = new_lnum
+                bookmark.update_lnum(b.id, new_lnum)
                 changed = true
 
                 -- signも更新
@@ -51,7 +51,6 @@ function M.extmarks_to_bookmarks(bufnr)
     end
 
     if changed then
-        bookmark.update_all(bs)
         require("bookmarks.persist").backup()
     end
 end

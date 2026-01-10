@@ -94,7 +94,8 @@ function M.list()
             return a.lnum < b.lnum
         end)
         for _, b in ipairs(bs) do
-            table.insert(new_bookmarks, b)
+            -- Return a copy to prevent direct modification
+            table.insert(new_bookmarks, vim.deepcopy(b))
         end
     end
 
@@ -102,16 +103,27 @@ function M.list()
 end
 
 function M.update_all(bs)
-    bookmarks = bs
+    bookmarks = vim.deepcopy(bs)
 end
 
----@param filename string
----@param lnum number
----@param extmark_id integer
-function M.update_extmark_id(filename, lnum, extmark_id)
+---@param id string
+---@param new_lnum number
+function M.update_lnum(id, new_lnum)
     for _, b in ipairs(bookmarks) do
-        if b.filename == filename and b.lnum == lnum then
+        if b.id == id then
+            b.lnum = new_lnum
+            return
+        end
+    end
+end
+
+---@param id string
+---@param extmark_id integer
+function M.update_extmark_id(id, extmark_id)
+    for _, b in ipairs(bookmarks) do
+        if b.id == id then
             b.extmark_id = extmark_id
+            return
         end
     end
 end

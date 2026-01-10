@@ -37,9 +37,9 @@ function M.json_write(json, filename)
 
     local function mkdir_p(path)
         if path and #path > 0 then
-            local success, err = os.execute('mkdir -p "' .. path .. '"')
+            local success, err = pcall(vim.fn.mkdir, path, "p")
             if not success then
-                require("bookmarks.notify").warn("Error creating directory: " .. err)
+                require("bookmarks.notify").warn("Error creating directory: " .. tostring(err))
             end
         end
     end

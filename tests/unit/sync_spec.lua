@@ -94,8 +94,12 @@ describe("sync", function()
             mock.set_buf_name(bufnr, filename)
             bookmark.add(bufnr, 10)
             
+            -- Find the added bookmark to get its ID
+            local b = bookmark.find(bufnr, 10)
+            assert.is_not_nil(b)
+            
             -- Set an extmark_id manually for testing
-            bookmark.update_extmark_id(filename, 10, 1000)
+            bookmark.update_extmark_id(b.id, 1000)
 
             -- Mock extmark returning new position (line 15, 0-indexed is 14)
             vim.api.nvim_buf_get_extmark_by_id.invokes(function()
