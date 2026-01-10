@@ -39,7 +39,7 @@ function M.json_write(json, filename)
         if path and #path > 0 then
             local success, err = os.execute('mkdir -p "' .. path .. '"')
             if not success then
-                vim.api.nvim_echo({ { "Error creating directory: " .. err, "WarningMsg" } }, true, {})
+                require("bookmarks.notify").warn("Error creating directory: " .. err)
             end
         end
     end

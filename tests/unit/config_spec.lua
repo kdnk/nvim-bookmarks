@@ -137,55 +137,111 @@ describe("config", function()
 
     
 
-            it("should warn and use default on invalid boolean type", function()
-
-                local opts = {
-
-                    persist = { enable = "true" } -- Invalid: string instead of boolean
-
-                }
-
-                config.setup(opts)
-
-                
-
-                assert.is_true(config.persist.enable) -- Should fallback to default true
-
-                assert.stub(vim.notify).was_called_with(
-
-                    match.matches("must be a boolean"),
-
-                    vim.log.levels.WARN
-
-                )
-
-            end)
+                    it("should warn and use default on invalid boolean type", function()
 
     
 
-            it("should warn and use default on invalid string type", function()
+                        local opts = {
 
-                local opts = {
+    
 
-                    sign = { text = 123 } -- Invalid: number instead of string
+                            persist = { enable = "true" } -- Invalid: string instead of boolean
 
-                }
+    
 
-                config.setup(opts)
+                        }
 
-                
+    
 
-                assert.are.equal("⚑", config.sign.text) -- Should fallback to default
+                        config.setup(opts)
 
-                assert.stub(vim.notify).was_called_with(
+    
 
-                    match.matches("must be a string"),
+                        
 
-                    vim.log.levels.WARN
+    
 
-                )
+                        assert.is_true(config.persist.enable) -- Should fallback to default true
 
-            end)
+    
+
+                        assert.stub(vim.notify).was_called_with(
+
+    
+
+                            match.matches("%[nvim%-bookmarks%] .*must be a boolean"),
+
+    
+
+                            vim.log.levels.WARN,
+
+    
+
+                            nil
+
+    
+
+                        )
+
+    
+
+                    end)
+
+    
+
+            
+
+    
+
+                    it("should warn and use default on invalid string type", function()
+
+    
+
+                        local opts = {
+
+    
+
+                            sign = { text = 123 } -- Invalid: number instead of string
+
+    
+
+                        }
+
+    
+
+                        config.setup(opts)
+
+    
+
+                        
+
+    
+
+                        assert.are.equal("⚑", config.sign.text) -- Should fallback to default
+
+    
+
+                        assert.stub(vim.notify).was_called_with(
+
+    
+
+                            match.matches("%[nvim%-bookmarks%] .*must be a string"),
+
+    
+
+                            vim.log.levels.WARN,
+
+    
+
+                            nil
+
+    
+
+                        )
+
+    
+
+                    end)
 
         end)
 

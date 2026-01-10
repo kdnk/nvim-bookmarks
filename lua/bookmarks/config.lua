@@ -1,6 +1,9 @@
+local notify = require("bookmarks.notify")
+
 local M = {}
 
 ---@type Bookmarks.Config
+-- ... (rest of default_config)
 local default_config = {
     persist = {
         enable = true,
@@ -42,10 +45,10 @@ local function validate_config(user_conf)
             end
             target[path[#path]] = val
         else
-            vim.notify(string.format(
-                "[nvim-bookmarks] Config error: '%s' must be a %s. Using default.",
+            notify.warn(string.format(
+                "Config error: '%s' must be a %s. Using default.",
                 table.concat(path, "."), type_str
-            ), vim.log.levels.WARN)
+            ))
         end
     end
 
@@ -75,13 +78,7 @@ function M.setup(opts)
 
     -- Warn if user is using deprecated persist.dir setting
     if opts and opts.persist and opts.persist.dir then
-        local data_dir = vim.fn.stdpath("data")
-        vim.api.nvim_echo({
-            { "[nvim-bookmarks] WARNING: ", "WarningMsg" },
-            { "config.persist.dir is deprecated and will be ignored.\n", "Normal" },
-            { "Bookmarks are now stored in: ", "Normal" },
-            { data_dir .. "/nvim-bookmarks/", "String" },
-        }, true, {})
+        notify.warn("config.persist.dir is deprecated and will be ignored. Bookmarks are now stored in standard Neovim data directory.")
     end
 
     for k, v in pairs(new_conf) do
