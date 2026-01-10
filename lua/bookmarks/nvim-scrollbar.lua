@@ -9,13 +9,7 @@ function M.setup()
     end
 
     require("scrollbar.handlers").register("bookmarks", function(bufnr)
-        local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr), ":p")
-        -- print("DEBUG: scrollbar handler for " .. filename)
-        local filtered_bookmarks = vim.tbl_filter(function(b)
-            -- print("DEBUG: comparing with " .. b.filename)
-            return b.filename == filename
-        end, bookmark.list())
-        -- print("DEBUG: matches found: " .. #filtered_bookmarks)
+        local filtered_bookmarks = bookmark.get_by_bufnr(bufnr)
         local marks = vim.tbl_map(function(b)
             return {
                 line = b.lnum - 1,
