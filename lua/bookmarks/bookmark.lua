@@ -12,8 +12,8 @@ local bookmarks = {}
 
 function M.update_bufnr()
     for _, b in ipairs(bookmarks) do
-        local bufnr = vim.fn.bufadd(b.filename)
-        b.bufnr = bufnr
+        local bufnr = vim.fn.bufnr(b.filename)
+        b.bufnr = bufnr -- will be -1 if not in buffer list
     end
 end
 
@@ -21,8 +21,9 @@ end
 ---@param lnum number
 ---@return boolean
 function M.exists(bufnr, lnum)
+    local filename = vim.api.nvim_buf_get_name(bufnr)
     for _, b in ipairs(bookmarks) do
-        if b.bufnr == bufnr and b.lnum == lnum then
+        if b.filename == filename and b.lnum == lnum then
             return true
         end
     end
@@ -68,8 +69,6 @@ end
 
 ---@return Bookmark[]
 function M.list()
-    M.update_bufnr()
-
     -- Get unique filenames and group bookmarks by filename
     local grouped = {}
     local filenames = {}

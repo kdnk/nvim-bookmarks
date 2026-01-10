@@ -40,7 +40,6 @@ end
 
 function M.backup()
     if config.persist.enable then
-        bookmark.update_bufnr()
         local json = bookmark.to_json()
         file.json_write(json, persist_path())
     end

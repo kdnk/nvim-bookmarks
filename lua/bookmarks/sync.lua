@@ -5,6 +5,7 @@ local extmark = require("bookmarks.extmark")
 local M = {}
 
 function M.bookmarks_to_signs()
+    bookmark.update_bufnr()
     sign.remove_all()
 
     local bookmarks = bookmark.list()
@@ -15,6 +16,7 @@ end
 
 ---@param bufnr integer
 function M.bookmarks_to_extmarks(bufnr)
+    bookmark.update_bufnr()
     extmark.clear_buffer(bufnr)
 
     local bookmarks = bookmark.list()
@@ -45,6 +47,10 @@ function M.extmarks_to_bookmarks(bufnr)
         -- signも更新
         sign.delete(bufnr, old_lnum)
         sign.add(bufnr, new_lnum)
+    end
+
+    if next(changes) then
+        require("bookmarks.persist").backup()
     end
 end
 

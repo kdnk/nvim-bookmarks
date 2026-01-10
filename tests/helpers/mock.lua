@@ -27,6 +27,23 @@ function M.setup_vim_api()
         end
         return M._buf_names[bufnr] or ("/test/file_" .. bufnr .. ".lua")
     end)
+
+    -- Stub vim.fn.bufnr (reverse lookup)
+    M._stubs.bufnr = stub(vim.fn, "bufnr")
+    M._stubs.bufnr.invokes(function(name)
+        if name == "%" then
+             local success, current = pcall(vim.api.nvim_get_current_buf)
+             return success and current or -1
+        end
+        for bufnr, filename in pairs(M._buf_names) do
+            if filename == name then
+                return bufnr
+            end
+        end
+        -- Default mock behavior for unmapped files if strictly needed, 
+        -- but returning -1 is safer for "not found"
+        return -1 
+    end)
 end
 
 -- Set the return value for nvim_buf_get_name

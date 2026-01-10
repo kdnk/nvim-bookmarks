@@ -20,6 +20,9 @@ local M = {}
 ---@param lnum number
 ---@return Sign[]
 local function get_signs(bufnr, lnum)
+    if not bufnr or bufnr <= 0 then
+        return {}
+    end
     local signs = vim.fn.sign_getplaced(bufnr, { group = config.sign.group, lnum = lnum })[1]["signs"] --[[@as Sign]]
 
     return vim.tbl_filter(function(sign)
@@ -30,6 +33,9 @@ end
 ---@param bufnr integer
 ---@param lnum number
 function M.add(bufnr, lnum)
+    if not bufnr or bufnr <= 0 then
+        return
+    end
     local sign_id = 0
     vim.fn.sign_place(sign_id, config.sign.group, config.sign.name, bufnr, { lnum = lnum, priority = 1000 })
 end

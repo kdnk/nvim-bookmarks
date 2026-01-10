@@ -181,6 +181,8 @@ describe("persist", function()
                 { filename = "/test/file.lua", bufnr = 1, lnum = 20 },
             })
             mock.set_file_contents(file_path, { json_data })
+            
+            mock.set_buf_name(1, "/test/file.lua")
 
             persist.restore()
 

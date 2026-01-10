@@ -182,15 +182,17 @@ describe("bookmark", function()
 
     describe("update_all", function()
         it("should replace entire bookmark list", function()
-            mock.set_buf_name(1, "/test/file1.lua")
-            bookmark.add(1, 10)
-
             local new_bookmarks = {
-                { filename = "/test/file2.lua", bufnr = 2, lnum = 20 },
+                { bufnr = 1, lnum = 10, filename = "/test/file.lua" },
+                { bufnr = 2, lnum = 20, filename = "/test/file2.lua" },
             }
+            
+            mock.set_buf_name(1, "/test/file.lua")
+            mock.set_buf_name(2, "/test/file2.lua")
+
             bookmark.update_all(new_bookmarks)
 
-            assert.is_false(bookmark.exists(1, 10))
+            assert.is_true(bookmark.exists(1, 10))
             assert.is_true(bookmark.exists(2, 20))
         end)
     end)

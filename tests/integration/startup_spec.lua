@@ -135,6 +135,10 @@ describe("startup and persistence (integration)", function()
             local json_str = vim.json.encode(saved_bookmarks)
             mock.set_file_contents(expected_path, { json_str })
             
+            -- Set up buffer names for resolution
+            mock.set_buf_name(1, "/test/project/file1.lua")
+            mock.set_buf_name(2, "/test/project/file2.lua")
+            
             -- Initialize plugin
             config.setup()
             
