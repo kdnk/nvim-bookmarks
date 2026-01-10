@@ -21,15 +21,10 @@ function M.toggle()
     local bufnr = vim.api.nvim_get_current_buf()
 
     if bookmark.exists(bufnr, lnum) then
-        sign.delete(bufnr, lnum)
-        extmark.delete(bufnr, lnum)
         bookmark.delete(bufnr, lnum)
     else
-        sign.add(bufnr, lnum)
-        extmark.add(bufnr, lnum)
         bookmark.add(bufnr, lnum)
     end
-    persist.backup()
 end
 
 function M.jump_next()
@@ -65,6 +60,37 @@ function M.setup(opts)
         callback = function(args)
             local bufnr = args.buf
             sync.extmarks_to_bookmarks(bufnr)
+        end,
+    })
+
+    -- Handle bookmark additions
+    vim.api.nvim_create_autocmd("User", {
+        pattern = "BookmarkAdded",
+        callback = function()
+            local bufnr = vim.api.nvim_get_current_buf()
+            -- We need the lnum of the added bookmark. 
+            -- Currently bookmark.add doesn't pass it in the event, but toggle uses cursor pos.
+            -- A better approach for the event handler might be to sync all or pass data.
+            -- For now, let's sync everything or assume cursor context if we want to be precise, 
+            -- BUT syncing everything is safer and simpler for consistency.
+            -- Actually, let's look at what toggle did: it added sign and extmark at specific lnum.
+            -- `sync.bookmarks_to_signs` and `sync.bookmarks_to_extmarks` do full sync.
+            
+            -- Let's use full sync for robustness for now, optimization can come later if needed.
+            sync.bookmarks_to_signs()
+            sync.bookmarks_to_extmarks(bufnr)
+            persist.backup()
+        end,
+    })
+
+    -- Handle bookmark deletions
+    vim.api.nvim_create_autocmd("User", {
+        pattern = "BookmarkDeleted",
+        callback = function()
+            local bufnr = vim.api.nvim_get_current_buf()
+            sync.bookmarks_to_signs()
+            sync.bookmarks_to_extmarks(bufnr)
+            persist.backup()
         end,
     })
 end

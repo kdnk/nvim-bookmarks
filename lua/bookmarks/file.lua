@@ -3,9 +3,15 @@ local M = {}
 ---@param filename string
 ---@return number
 function M.get_max_lnum(filename)
+    -- Check if buffer is already loaded
+    local bufnr = vim.fn.bufnr(filename)
+    if bufnr ~= -1 and vim.api.nvim_buf_is_loaded(bufnr) then
+        return vim.api.nvim_buf_line_count(bufnr)
+    end
+
     local file = io.open(filename, "r")
     if file == nil then
-        error("[io.get_max_lnum] file is nil")
+        error("[io.get_max_lnum] file is nil: " .. filename)
     end
     local line_count = 0
     for _ in file:lines() do

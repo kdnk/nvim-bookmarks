@@ -88,7 +88,7 @@ describe("toggle workflow (integration)", function()
         stub(vim.api, "nvim_buf_set_extmark").returns(1000)
         stub(vim.api, "nvim_buf_del_extmark")
         stub(vim.api, "nvim_buf_get_extmark_by_id").returns({})
-        stub(vim.api, "nvim_exec_autocmds")
+        -- Remove stub(vim.api, "nvim_exec_autocmds") to allow real handlers to run
 
         -- Stub cursor position
         stub(vim.api, "nvim_get_current_win").returns(1000)
@@ -101,13 +101,15 @@ describe("toggle workflow (integration)", function()
         end
 
         -- Load modules
-        config = require("bookmarks.config")
-        config.setup()
         bm = require("bookmarks.init")
         bookmark = require("bookmarks.bookmark")
         sign = require("bookmarks.sign")
         extmark = require("bookmarks.extmark")
         persist = require("bookmarks.persist")
+        config = require("bookmarks.config")
+        
+        -- Setup plugin (registers autocmds)
+        bm.setup()
     end)
 
     after_each(function()
@@ -171,22 +173,6 @@ describe("toggle workflow (integration)", function()
             -- We can check this indirectly by verifying bookmark persists
             assert.is_true(bookmark.exists(bufnr, 10))
         end)
-
-        it("should trigger BookmarkAdded autocmd", function()
-            local bufnr = 1
-            mock.set_buf_name(bufnr, "/test/file.lua")
-            vim.api.nvim_get_current_buf = function()
-                return bufnr
-            end
-
-            bm.toggle()
-
-            -- Verify autocmd was triggered
-            assert.stub(vim.api.nvim_exec_autocmds).was_called_with(
-                "User",
-                { pattern = "BookmarkAdded" }
-            )
-        end)
     end)
 
     describe("toggle OFF (remove bookmark)", function()
@@ -242,29 +228,6 @@ describe("toggle workflow (integration)", function()
 
             -- Verify extmark was deleted
             assert.stub(vim.api.nvim_buf_del_extmark).was_called()
-        end)
-
-        it("should trigger BookmarkDeleted autocmd", function()
-            local bufnr = 1
-            mock.set_buf_name(bufnr, "/test/file.lua")
-            vim.api.nvim_get_current_buf = function()
-                return bufnr
-            end
-
-            -- Add bookmark
-            bm.toggle()
-
-            -- Clear previous autocmd calls
-            vim.api.nvim_exec_autocmds:clear()
-
-            -- Remove bookmark
-            bm.toggle()
-
-            -- Verify autocmd was triggered
-            assert.stub(vim.api.nvim_exec_autocmds).was_called_with(
-                "User",
-                { pattern = "BookmarkDeleted" }
-            )
         end)
     end)
 
