@@ -50,27 +50,42 @@ end
 ---@param update_index fun(): integer
 ---@return integer
 function M.sanitize(index, update_index)
-    local bs = M.list()
-    if is_valid(bs[index]) then
-        return index
-    end
+    while true do
+        local bs = M.list()
+        local b = bs[index]
+        if not b then
+            return -1
+        end
 
-    local b = bs[index]
-    if b ~= nil then
+        if is_valid(b) then
+            return index
+        end
+
         M.delete(b.bufnr, b.lnum)
+        index = update_index()
     end
+end
 
-    index = update_index()
-    bs = M.list()
-
-    if is_valid(bs[index]) then
-        return index
-    elseif b then
-        return M.sanitize(index, update_index)
-    else
-        -- noop
-        return -1
+---@param bufnr integer
+---@return Bookmarks.Bookmark[]
+function M.get_by_bufnr(bufnr)
+    local filename = vim.api.nvim_buf_get_name(bufnr)
+    local result = {}
+    for _, b in ipairs(bookmarks) do
+        if b.filename == filename then
+            table.insert(result, vim.deepcopy(b))
+        end
     end
+    return result
+end
+
+---@return Bookmarks.Bookmark[]
+function M.get_all()
+    local result = {}
+    for _, b in ipairs(bookmarks) do
+        table.insert(result, vim.deepcopy(b))
+    end
+    return result
 end
 
 ---@return Bookmarks.Bookmark[]
@@ -166,7 +181,7 @@ function M.remove_all()
 end
 
 function M.to_json()
-    local valid_bookmarks = vim.tbl_filter(is_valid, M.list())
+    local valid_bookmarks = vim.tbl_filter(is_valid, M.get_all())
     return { vim.json.encode(valid_bookmarks) }
 end
 
