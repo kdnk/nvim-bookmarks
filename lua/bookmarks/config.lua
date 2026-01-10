@@ -1,4 +1,3 @@
-local core = require("bookmarks.core")
 local M = {}
 
 local default_config = {
@@ -35,9 +34,9 @@ function M.setup(opts)
         }, true, {})
     end
 
-    core.lua.table.each(new_conf, function(k, v)
+    for k, v in pairs(new_conf) do
         M[k] = v
-    end)
+    end
 
     vim.fn.sign_define(
         "Bookmark",

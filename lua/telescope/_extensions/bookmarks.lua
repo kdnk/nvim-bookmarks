@@ -5,7 +5,6 @@ local entry_display = require("telescope.pickers.entry_display")
 local conf = require("telescope.config").values
 
 local bookmark = require("bookmarks.bookmark")
-local core = require("bookmarks.core")
 
 ---@param bufnr integer
 local function get_relative_path(bufnr)
@@ -20,14 +19,14 @@ local function bookmark_picker(opts)
 
     ---@type { filename: string, lnum: number, bufnr: integer, index: integer }[]
     local marklist = {}
-    core.lua.list.each(bs, function(b, i)
+    for i, b in ipairs(bs) do
         table.insert(marklist, {
             filename = b.filename,
             lnum = b.lnum,
             bufnr = b.bufnr,
             index = i,
         })
-    end)
+    end
 
     local display = function(entry)
         local displayer = entry_display.create({

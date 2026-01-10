@@ -1,4 +1,3 @@
-local core = require("bookmarks.core")
 local config = require("bookmarks.config")
 
 local M = {}
@@ -23,9 +22,9 @@ local M = {}
 local function get_signs(bufnr, lnum)
     local signs = vim.fn.sign_getplaced(bufnr, { group = config.sign.group, lnum = lnum })[1]["signs"] --[[@as Sign]]
 
-    return core.lua.list.filter(signs, function(sign)
+    return vim.tbl_filter(function(sign)
         return sign.lnum == lnum
-    end)
+    end, signs)
 end
 
 ---@param bufnr integer
@@ -39,9 +38,9 @@ end
 ---@param lnum integer
 function M.delete(bufnr, lnum)
     local signs = get_signs(bufnr, lnum)
-    core.lua.list.each(signs, function(sign)
+    for _, sign in ipairs(signs) do
         vim.fn.sign_unplace(config.sign.group, { buffer = bufnr, id = sign.id })
-    end)
+    end
 end
 
 function M.remove_all()

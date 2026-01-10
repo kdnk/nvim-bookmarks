@@ -1,4 +1,3 @@
-local core = require("bookmarks.core")
 local file = require("bookmarks.file")
 
 local M = {}
@@ -12,62 +11,52 @@ local M = {}
 local bookmarks = {}
 
 function M.update_bufnr()
-    core.lua.list.each(bookmarks, function(bookmark)
-        local bufnr = vim.fn.bufadd(bookmark.filename)
-        bookmark.bufnr = bufnr
-    end)
+    for _, b in ipairs(bookmarks) do
+        local bufnr = vim.fn.bufadd(b.filename)
+        b.bufnr = bufnr
+    end
 end
 
 ---@param bufnr integer
 ---@param lnum number
 ---@return boolean
 function M.exists(bufnr, lnum)
-    return core.lua.list.includes(bookmarks, function(b)
-        return b.bufnr == bufnr and b.lnum == lnum
-    end)
+    for _, b in ipairs(bookmarks) do
+        if b.bufnr == bufnr and b.lnum == lnum then
+            return true
+        end
+    end
+    return false
 end
 
----@param bs Bookmark[]
----@param index integer
+---@param b Bookmark
 ---@return boolean
-local function is_valid(bs, index)
-    local b = bs[index]
-    local success, max_lnum = pcall(function()
-        return file.get_max_lnum(b.filename)
-    end)
-
-    if success then
-        return b.lnum <= max_lnum
-    else
+local function is_valid(b)
+    if not b then
         return false
     end
-end
-
----@param bs Bookmark[]
-local function filter_valid_bookmarks(bs)
-    return core.lua.list.filter(bs, function(b, i)
-        return is_valid(bs, i)
-    end)
+    local success, max_lnum = pcall(file.get_max_lnum, b.filename)
+    return success and b.lnum <= max_lnum
 end
 
 ---@param index integer
 ---@param update_index fun(): integer
 ---@return integer
 function M.sanitize(index, update_index)
-    if is_valid(M.list(), index) then
+    local bs = M.list()
+    if is_valid(bs[index]) then
         return index
     end
 
-    local bs = M.list()
     local b = bs[index]
-
     if b ~= nil then
         M.delete(b.bufnr, b.lnum)
     end
 
     index = update_index()
+    bs = M.list()
 
-    if is_valid(M.list(), index) then
+    if is_valid(bs[index]) then
         return index
     elseif b then
         return M.sanitize(index, update_index)
@@ -81,24 +70,27 @@ end
 function M.list()
     M.update_bufnr()
 
-    local filenames = core.lua.list.uniq(core.lua.list.map(bookmarks, function(bookmark)
-        return bookmark.filename
-    end))
+    -- Get unique filenames and group bookmarks by filename
+    local grouped = {}
+    local filenames = {}
+    for _, b in ipairs(bookmarks) do
+        if not grouped[b.filename] then
+            grouped[b.filename] = {}
+            table.insert(filenames, b.filename)
+        end
+        table.insert(grouped[b.filename], b)
+    end
 
     local new_bookmarks = {}
-    core.lua.list.each(filenames, function(filename)
-        local bs = core.lua.list.sort(
-            core.lua.list.filter(bookmarks, function(bookmark)
-                return bookmark.filename == filename
-            end),
-            function(prev, next)
-                return prev.lnum > next.lnum
-            end
-        )
-        core.lua.list.each(bs, function(bookmark)
-            table.insert(new_bookmarks, bookmark)
+    for _, filename in ipairs(filenames) do
+        local bs = grouped[filename]
+        table.sort(bs, function(a, b)
+            return a.lnum < b.lnum
         end)
-    end)
+        for _, b in ipairs(bs) do
+            table.insert(new_bookmarks, b)
+        end
+    end
 
     return new_bookmarks
 end
@@ -122,11 +114,12 @@ end
 ---@return nil
 function M.delete(bufnr, lnum)
     local filename = vim.api.nvim_buf_get_name(bufnr)
-    core.lua.list.each(bookmarks, function(bookmark, index)
-        if bookmark.filename == filename and bookmark.lnum == lnum then
-            table.remove(bookmarks, index)
+    for i = #bookmarks, 1, -1 do
+        local b = bookmarks[i]
+        if b.filename == filename and b.lnum == lnum then
+            table.remove(bookmarks, i)
         end
-    end)
+    end
 
     vim.api.nvim_exec_autocmds("User", { pattern = "BookmarkDeleted" })
 end
@@ -135,27 +128,24 @@ function M.remove_all()
     bookmarks = {}
 end
 
----@return any
 function M.to_json()
-    return { vim.json.encode(filter_valid_bookmarks(M.list())) }
+    local valid_bookmarks = vim.tbl_filter(is_valid, M.list())
+    return { vim.json.encode(valid_bookmarks) }
 end
 
 ---@param json any[]
 ---@return Bookmark[]
 function M.from_json(json)
-    if json == nil then
+    if not json or not json[1] then
         return {}
-    else
-        local success, bs = pcall(function()
-            return vim.json.decode(json[1]) or {} --[[ @as Bookmark[] ]]
-        end)
-        if not success then
-            return {}
-        end
-        return core.lua.list.filter(bs, function(_, i)
-            return is_valid(bs, i)
-        end)
     end
+
+    local success, bs = pcall(vim.json.decode, json[1])
+    if not success or not bs then
+        return {}
+    end
+
+    return vim.tbl_filter(is_valid, bs)
 end
 
 return M

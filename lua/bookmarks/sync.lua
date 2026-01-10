@@ -1,4 +1,3 @@
-local core = require("bookmarks.core")
 local bookmark = require("bookmarks.bookmark")
 local sign = require("bookmarks.sign")
 local extmark = require("bookmarks.extmark")
@@ -9,9 +8,9 @@ function M.bookmarks_to_signs()
     sign.remove_all()
 
     local bookmarks = bookmark.list()
-    core.lua.list.each(bookmarks, function(b)
+    for _, b in ipairs(bookmarks) do
         sign.add(b.bufnr, b.lnum)
-    end)
+    end
 end
 
 ---@param bufnr integer
@@ -19,11 +18,11 @@ function M.bookmarks_to_extmarks(bufnr)
     extmark.clear_buffer(bufnr)
 
     local bookmarks = bookmark.list()
-    core.lua.list.each(bookmarks, function(b)
+    for _, b in ipairs(bookmarks) do
         if b.bufnr == bufnr then
             extmark.add(b.bufnr, b.lnum)
         end
-    end)
+    end
 end
 
 ---@param bufnr integer
@@ -33,11 +32,11 @@ function M.extmarks_to_bookmarks(bufnr)
     for old_lnum, new_lnum in pairs(changes) do
         -- bookmarkの行番号を更新
         local bs = bookmark.list()
-        core.lua.list.each(bs, function(b, index)
+        for index, b in ipairs(bs) do
             if b.bufnr == bufnr and b.lnum == old_lnum then
                 bs[index].lnum = new_lnum
             end
-        end)
+        end
         bookmark.update_all(bs)
 
         -- extmarkの内部管理も更新

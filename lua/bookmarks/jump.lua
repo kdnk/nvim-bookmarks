@@ -1,4 +1,3 @@
-local core = require("bookmarks.core")
 local bookmark = require("bookmarks.bookmark")
 
 local M = {}
@@ -49,14 +48,20 @@ end
 local function get_neighboring_bookmarks(filename, lnum)
     local bookmarks = bookmark.list()
 
-    local prev = core.lua.list.find_last_index(bookmarks, function(b)
-        return filename == b.filename and b.lnum < lnum
-    end)
-    local next = core.lua.list.find_index(bookmarks, function(b)
-        return b.filename == filename and lnum < b.lnum
-    end)
+    local prev = -1
+    local next = -1
 
-    return { prev = prev or -1, next = next or -1 }
+    for i, b in ipairs(bookmarks) do
+        if b.filename == filename then
+            if b.lnum < lnum then
+                prev = i
+            elseif b.lnum > lnum and next == -1 then
+                next = i
+            end
+        end
+    end
+
+    return { prev = prev, next = next }
 end
 
 ---@param opts { reverse: boolean }

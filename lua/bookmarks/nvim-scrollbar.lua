@@ -1,5 +1,4 @@
 local config = require("bookmarks.config")
-local core = require("bookmarks.core")
 local bookmark = require("bookmarks.bookmark")
 
 local M = {}
@@ -10,17 +9,17 @@ function M.setup()
     end
 
     require("scrollbar.handlers").register("bookmarks", function(bufnr)
-        local filtered_bookmarks = core.lua.list.filter(bookmark.list(), function(b)
+        local filtered_bookmarks = vim.tbl_filter(function(b)
             return b.bufnr == bufnr
-        end)
-        local marks = core.lua.list.map(filtered_bookmarks, function(b)
+        end, bookmark.list())
+        local marks = vim.tbl_map(function(b)
             return {
                 line = b.lnum - 1,
                 text = config.scrollbar.text,
                 level = 100,
                 type = "Info",
             }
-        end)
+        end, filtered_bookmarks)
 
         return marks
     end)
