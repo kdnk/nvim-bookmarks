@@ -49,6 +49,17 @@ function M.jump(opts)
             vim.fn.bufload(bufnr)
             b.bufnr = bufnr
         end
+
+        local line_count = vim.api.nvim_buf_line_count(bufnr)
+        if b.lnum > line_count then
+            bookmark.delete(bufnr, b.lnum)
+            vim.notify(
+                "Bookmark at line " .. b.lnum .. " removed because the line was deleted.",
+                vim.log.levels.WARN
+            )
+            return
+        end
+
         vim.api.nvim_set_current_buf(bufnr)
         local win_id = vim.api.nvim_get_current_win()
         vim.api.nvim_win_set_cursor(win_id, { b.lnum, 0 })

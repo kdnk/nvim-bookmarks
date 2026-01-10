@@ -12,6 +12,7 @@ describe("jump", function()
     local cursor_position = { 1, 0 }
     local current_bufnr = 0
     local current_win = 1000
+    local buffer_line_count = 1000
 
     before_each(function()
         -- Reset modules
@@ -23,6 +24,7 @@ describe("jump", function()
         -- Reset state
         cursor_position = { 1, 0 }
         current_bufnr = 0
+        buffer_line_count = 1000
 
         -- Setup mocks
         mock.setup_vim_api()
@@ -41,6 +43,10 @@ describe("jump", function()
         stub(vim.api, "nvim_win_set_cursor").invokes(function(win, pos)
             cursor_position = pos
         end)
+        stub(vim.api, "nvim_buf_line_count").invokes(function()
+            return buffer_line_count
+        end)
+        stub(vim.api, "nvim_buf_is_valid").returns(true)
 
         -- Stub vim.fn.bufadd to return the filename's bufnr
         stub(vim.fn, "bufadd").invokes(function(filename)
@@ -190,6 +196,29 @@ describe("jump", function()
 
             jump.jump({ reverse = false })
             assert.are.equal(10, cursor_position[1])
+        end)
+    end)
+
+    describe("jump to deleted line", function()
+        it("should NOT crash but remove bookmark when jumping to a deleted line", function()
+            mock.set_buf_name(1, "/test/file1.lua")
+            -- Bookmark at line 10
+            bookmark.add(1, 10)
+
+            -- Simulate file shrinking to 5 lines
+            buffer_line_count = 5
+
+            -- Spy on notify and delete
+            local notify_spy = stub(vim, "notify")
+            local delete_spy = stub(bookmark, "delete")
+
+            -- Should not error now
+            assert.has_no_error(function()
+                jump.jump({ reverse = false })
+            end)
+
+            assert.stub(notify_spy).was_called()
+            assert.stub(delete_spy).was_called_with(1, 10)
         end)
     end)
 end)
