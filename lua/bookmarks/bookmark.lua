@@ -129,7 +129,7 @@ function M.update_extmark_id(id, extmark_id)
 end
 
 function M.add(bufnr, lnum)
-    local filename = vim.api.nvim_buf_get_name(bufnr)
+    local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr), ":p")
     table.insert(bookmarks, {
         id = generate_id(),
         filename = filename,
