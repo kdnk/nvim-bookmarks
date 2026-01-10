@@ -191,7 +191,7 @@ describe("persist", function()
             assert.is_true(bookmark.exists(1, 20))
         end)
 
-        it("should call sync.bookmarks_to_signs after restore", function()
+        it("should trigger BookmarkRestored autocmd after restore", function()
             config.persist.enable = true
 
             local file_path = test_data_dir .. "/nvim-bookmarks/aaaaaaaaaaaaaaaa/main.json"
@@ -200,30 +200,16 @@ describe("persist", function()
             })
             mock.set_file_contents(file_path, { json_data })
 
-            persist.restore()
-
-            assert.stub(sync.bookmarks_to_signs).was_called()
-        end)
-
-        it("should create BufEnter autocmd for extmarks", function()
-            config.persist.enable = true
-
-            local file_path = test_data_dir .. "/nvim-bookmarks/aaaaaaaaaaaaaaaa/main.json"
-            local json_data = vim.json.encode({
-                { filename = "/test/file.lua", bufnr = 1, lnum = 10 },
-            })
-            mock.set_file_contents(file_path, { json_data })
-
-            -- Stub nvim_create_autocmd to verify it's called
-            local autocmd_stub = stub(vim.api, "nvim_create_autocmd")
+            -- Stub nvim_exec_autocmds
+            local s = stub(vim.api, "nvim_exec_autocmds")
 
             persist.restore()
 
-            -- Should create autocmd
-            assert.stub(autocmd_stub).was_called()
-            assert.stub(autocmd_stub).was_called_with("BufEnter", match.is_table())
-
-            autocmd_stub:revert()
+            assert.stub(s).was_called_with(
+                "User",
+                { pattern = "BookmarkRestored" }
+            )
+            s:revert()
         end)
     end)
 

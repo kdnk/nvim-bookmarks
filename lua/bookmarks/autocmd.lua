@@ -47,6 +47,21 @@ function M.setup()
             persist.backup()
         end,
     })
+
+    -- Handle bookmark restoration
+    vim.api.nvim_create_autocmd("User", {
+        pattern = "BookmarkRestored",
+        group = group,
+        callback = function()
+            sync.bookmarks_to_signs()
+            -- 全てのバッファに対してextmarkを作成（現在開いているもの）
+            for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+                if vim.api.nvim_buf_is_loaded(bufnr) then
+                    sync.bookmarks_to_extmarks(bufnr)
+                end
+            end
+        end,
+    })
 end
 
 return M
