@@ -1,5 +1,4 @@
 local sync = require("bookmarks.sync")
-local persist = require("bookmarks.persist")
 
 local M = {}
 

@@ -5,6 +5,7 @@ local extmark = require("bookmarks.extmark")
 local jump = require("bookmarks.jump")
 local persist = require("bookmarks.persist")
 local autocmd = require("bookmarks.autocmd")
+local scrollbar = require("bookmarks.nvim-scrollbar")
 
 local M = {}
 
@@ -43,10 +44,11 @@ function M.restore()
     persist.restore()
 end
 
----@param opts? Config
+---@param opts? Bookmarks.Config
 function M.setup(opts)
     config.setup(opts)
     autocmd.setup()
+    scrollbar.setup()
 end
 
 return M
