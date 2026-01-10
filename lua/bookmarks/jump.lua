@@ -68,6 +68,22 @@ end
 
 -- These are kept for backward compatibility with init.lua and tests
 function M.reset_index() end
-function M.get_index() return 1 end
+function M.get_index()
+    local bs = bookmark.list()
+    if #bs == 0 then
+        return 0
+    end
+
+    local curr_file = vim.api.nvim_buf_get_name(0)
+    local curr_lnum = vim.api.nvim_win_get_cursor(0)[1]
+
+    for i, b in ipairs(bs) do
+        if b.filename == curr_file and b.lnum == curr_lnum then
+            return i
+        end
+    end
+
+    return 0
+end
 
 return M

@@ -221,4 +221,40 @@ describe("jump", function()
             assert.stub(delete_spy).was_called_with(1, 10)
         end)
     end)
+
+    describe("get_index", function()
+        it("should return correct index when on bookmark", function()
+            mock.set_buf_name(1, "/test/file1.lua")
+            bookmark.add(1, 10) -- index 1
+            bookmark.add(1, 20) -- index 2
+            bookmark.add(1, 30) -- index 3
+
+            -- On second bookmark
+            cursor_position = { 20, 0 }
+            current_bufnr = 1
+            assert.are.equal(2, jump.get_index())
+        end)
+
+        it("should return 0 when not on bookmark", function()
+            mock.set_buf_name(1, "/test/file1.lua")
+            bookmark.add(1, 10)
+
+            -- Not on bookmark
+            cursor_position = { 11, 0 }
+            current_bufnr = 1
+            assert.are.equal(0, jump.get_index())
+        end)
+
+        it("should work across files", function()
+            mock.set_buf_name(1, "/test/file1.lua")
+            mock.set_buf_name(2, "/test/file2.lua")
+            bookmark.add(1, 10) -- index 1
+            bookmark.add(2, 10) -- index 2
+
+            -- On file 2
+            cursor_position = { 10, 0 }
+            current_bufnr = 2
+            assert.are.equal(2, jump.get_index())
+        end)
+    end)
 end)

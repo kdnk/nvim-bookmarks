@@ -4,10 +4,13 @@ local M = {}
 
 function M.bookmark_count()
     local bookmarks = bookmark.list()
-    if #bookmarks == 0 then
+    local total = #bookmarks
+    if total == 0 then
         return "0"
     end
-    return jump.get_index() .. "/" .. #bookmarks
+    local index = jump.get_index()
+    local display_index = index == 0 and "-" or tostring(index)
+    return display_index .. "/" .. total
 end
 
 return M
