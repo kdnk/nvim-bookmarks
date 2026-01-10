@@ -21,6 +21,7 @@ describe("navigation workflow (integration)", function()
         package.loaded["bookmarks.config"] = nil
         package.loaded["bookmarks.file"] = nil
         package.loaded["bookmarks.core"] = nil
+        package.loaded["bookmarks.autocmd"] = nil
 
         -- Reset state
         current_bufnr = 1

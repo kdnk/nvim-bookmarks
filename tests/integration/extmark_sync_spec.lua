@@ -34,6 +34,7 @@ describe("extmark sync (integration)", function()
         package.loaded["bookmarks.sync"] = nil
         package.loaded["bookmarks.file"] = nil
         package.loaded["bookmarks.core"] = nil
+        package.loaded["bookmarks.autocmd"] = nil
 
         -- Setup mocks
         mock.setup_vim_api()
