@@ -201,6 +201,9 @@ describe("jump", function()
 
     describe("jump to deleted line", function()
         it("should NOT crash but remove bookmark when jumping to a deleted line", function()
+            -- Enable debug to see notification
+            require("bookmarks.config").setup({ debug = true })
+
             mock.set_buf_name(1, "/test/file1.lua")
             -- Bookmark at line 10
             bookmark.add(1, 10)

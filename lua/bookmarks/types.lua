@@ -1,6 +1,7 @@
 ---@meta
 
 ---@class Bookmarks.Config
+---@field debug boolean
 ---@field persist { enable: boolean, per_branch: boolean }
 ---@field sign { group: string, name: string, text: string }
 ---@field scrollbar { enable: boolean, text: string }

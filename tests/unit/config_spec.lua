@@ -117,7 +117,6 @@ describe("config", function()
 
         it("should warn and use default on invalid boolean type", function()
             local opts = {
-
                 persist = { enable = "true" }, -- Invalid: string instead of boolean
             }
 
@@ -127,12 +126,15 @@ describe("config", function()
 
             assert
                 .stub(vim.notify)
-                .was_called_with(match.matches("%[nvim%-bookmarks%] .*must be a boolean"), vim.log.levels.WARN, nil)
+                .was_called_with(
+                    match.matches("%[nvim%-bookmarks%] .*must be a boolean"),
+                    vim.log.levels.WARN,
+                    { force = true }
+                )
         end)
 
         it("should warn and use default on invalid string type", function()
             local opts = {
-
                 sign = { text = 123 }, -- Invalid: number instead of string
             }
 
@@ -142,7 +144,11 @@ describe("config", function()
 
             assert
                 .stub(vim.notify)
-                .was_called_with(match.matches("%[nvim%-bookmarks%] .*must be a string"), vim.log.levels.WARN, nil)
+                .was_called_with(
+                    match.matches("%[nvim%-bookmarks%] .*must be a string"),
+                    vim.log.levels.WARN,
+                    { force = true }
+                )
         end)
     end)
 end)

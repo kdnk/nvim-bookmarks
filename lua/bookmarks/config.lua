@@ -5,6 +5,7 @@ local M = {}
 ---@type Bookmarks.Config
 -- ... (rest of default_config)
 local default_config = {
+    debug = false,
     persist = {
         enable = true,
         per_branch = true,
@@ -52,12 +53,15 @@ local function validate_config(user_conf)
             target[path[#path]] = val
         else
             notify.warn(
-                string.format("Config error: '%s' must be a %s. Using default.", table.concat(path, "."), type_str)
+                string.format("Config error: '%s' must be a %s. Using default.", table.concat(path, "."), type_str),
+                { force = true }
             )
         end
     end
 
     -- Validate fields
+    check({ "debug" }, "debug", "boolean")
+
     if user_conf.persist then
         check({ "persist", "enable" }, "enable", "boolean")
         check({ "persist", "per_branch" }, "per_branch", "boolean")
@@ -84,7 +88,8 @@ function M.setup(opts)
     -- Warn if user is using deprecated persist.dir setting
     if opts and opts.persist and opts.persist.dir then
         notify.warn(
-            "config.persist.dir is deprecated and will be ignored. Bookmarks are now stored in standard Neovim data directory."
+            "config.persist.dir is deprecated and will be ignored. Bookmarks are now stored in standard Neovim data directory.",
+            { force = true }
         )
     end
 

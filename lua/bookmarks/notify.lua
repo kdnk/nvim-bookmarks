@@ -4,6 +4,11 @@ local M = {}
 ---@param level integer|nil
 ---@param opts table|nil
 local function notify(msg, level, opts)
+    opts = opts or {}
+    local is_error = level == vim.log.levels.ERROR
+    if not opts.force and not is_error and not require("bookmarks.config").debug then
+        return
+    end
     vim.notify(string.format("[nvim-bookmarks] %s", msg), level, opts)
 end
 
