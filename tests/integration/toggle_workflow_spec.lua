@@ -88,9 +88,9 @@ describe("toggle workflow (integration)", function()
         stub(vim.api, "nvim_create_namespace").returns(123)
         stub(vim.api, "nvim_buf_set_extmark").returns(1000)
         stub(vim.api, "nvim_buf_del_extmark")
-        stub(vim.api, "nvim_buf_get_extmark_by_id").returns({})
-        -- Remove stub(vim.api, "nvim_exec_autocmds") to allow real handlers to run
-
+        stub(vim.api, "nvim_buf_get_extmark_by_id").returns({ 9, 0 })
+        stub(vim.api, "nvim_buf_clear_namespace")
+        
         -- Stub cursor position
         stub(vim.api, "nvim_get_current_win").returns(1000)
         stub(vim.api, "nvim_win_get_cursor").returns({ 10, 0 })
@@ -227,8 +227,8 @@ describe("toggle workflow (integration)", function()
             -- Remove bookmark
             bm.toggle()
 
-            -- Verify extmark was deleted
-            assert.stub(vim.api.nvim_buf_del_extmark).was_called()
+            -- Verify extmark was cleared (via sync.bookmarks_to_extmarks calling clear_all)
+            assert.stub(vim.api.nvim_buf_clear_namespace).was_called()
         end)
     end)
 
@@ -276,7 +276,7 @@ describe("toggle workflow (integration)", function()
             -- Verify all layers are cleaned up
             assert.is_false(bookmark.exists(bufnr, lnum)) -- Memory layer
             assert.stub(vim.fn.sign_unplace).was_called() -- Visual layer
-            assert.stub(vim.api.nvim_buf_del_extmark).was_called() -- Position tracking layer
+            assert.stub(vim.api.nvim_buf_clear_namespace).was_called() -- Position tracking layer
         end)
     end)
 end)

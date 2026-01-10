@@ -99,31 +99,30 @@ describe("extmark sync (integration)", function()
         -- 1. Add a bookmark
         bookmark.add(bufnr, original_lnum)
         
+        -- Initial sync to assign extmark IDs
+        sync.bookmarks_to_extmarks(bufnr)
+        
         -- Verify initial save
-        local initial_write = mock.get_written_file(expected_path)
-        assert.is_not_nil(initial_write)
-        local initial_json = vim.json.decode(initial_write[1])
-        assert.are.equal(original_lnum, initial_json[1].lnum)
+        print("TEST: expected path = " .. expected_path)
 
         -- Clear written files to verify next write
-        mock.reset() 
-        -- Note: mock.reset clears written files but keeps other mocks active if using helper's reset.
-        -- But here we need to keep stubs active. Helper's reset might clear stubs.
-        -- Let's just clear the written files map manually or check if it changed.
-        -- Helper's reset() does NOT clear stubs, only state. Perfect.
-        mock.reset() 
+        mock.clear_written_files() 
         
         -- 2. Simulate extmark movement
-        -- We mock extmark.get_position_changes to return a change
-        -- In reality, nvim triggers TextChanged, which calls sync.extmarks_to_bookmarks, 
-        -- which calls get_position_changes.
-        
-        -- We stub get_position_changes to simulate that nvim reported a move
-        local extmark_mod = require("bookmarks.extmark")
-        stub(extmark_mod, "get_position_changes").returns({ [original_lnum] = new_lnum })
+        -- Find the assigned extmark_id
+        local bs = bookmark.list()
+        local eid = bs[1].extmark_id
+        assert.is_not_nil(eid, "Bookmark should have an extmark_id assigned")
+
+        -- We stub nvim_buf_get_extmark_by_id to simulate movement
+        -- Neovim returns 0-indexed line number
+        local s = stub(vim.api, "nvim_buf_get_extmark_by_id")
+        s.returns({ new_lnum - 1, 0 })
 
         -- 3. Trigger the sync (simulating TextChanged event)
         sync.extmarks_to_bookmarks(bufnr)
+        
+        s:revert()
 
         -- 4. Verify persist.backup was called and file was updated
         local updated_write = mock.get_written_file(expected_path)

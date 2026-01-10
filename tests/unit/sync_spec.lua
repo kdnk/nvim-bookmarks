@@ -90,18 +90,23 @@ describe("sync", function()
     describe("extmarks_to_bookmarks", function()
         it("should update bookmarks when extmarks move", function()
             local bufnr = 1
-            mock.set_buf_name(bufnr, "/test/file.lua")
+            local filename = "/test/file.lua"
+            mock.set_buf_name(bufnr, filename)
             bookmark.add(bufnr, 10)
+            
+            -- Set an extmark_id manually for testing
+            bookmark.update_extmark_id(filename, 10, 1000)
 
-            -- Mock extmark returning new position
-            vim.api.nvim_buf_get_extmark_by_id:clear()
-            vim.api.nvim_buf_get_extmark_by_id.returns({ 14, 0 }) -- Moved to line 15 (0-indexed)
+            -- Mock extmark returning new position (line 15, 0-indexed is 14)
+            vim.api.nvim_buf_get_extmark_by_id.invokes(function()
+                return { 14, 0 }
+            end)
 
             sync.extmarks_to_bookmarks(bufnr)
 
-            -- Bookmark should be updated
-            -- Note: This tests the integration flow, not exact position
-            assert.is_not_nil(bookmark.list())
+            -- Bookmark should be updated to line 15
+            assert.is_true(bookmark.exists(bufnr, 15))
+            assert.is_false(bookmark.exists(bufnr, 10))
         end)
     end)
 end)

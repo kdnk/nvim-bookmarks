@@ -6,6 +6,7 @@ local M = {}
 ---@field filename string
 ---@field bufnr integer
 ---@field lnum number
+---@field extmark_id integer|nil
 
 ---@type Bookmark[]
 local bookmarks = {}
@@ -99,9 +100,17 @@ function M.update_all(bs)
     bookmarks = bs
 end
 
----@param bufnr integer
+---@param filename string
 ---@param lnum number
----@return nil
+---@param extmark_id integer
+function M.update_extmark_id(filename, lnum, extmark_id)
+    for _, b in ipairs(bookmarks) do
+        if b.filename == filename and b.lnum == lnum then
+            b.extmark_id = extmark_id
+        end
+    end
+end
+
 function M.add(bufnr, lnum)
     local filename = vim.api.nvim_buf_get_name(bufnr)
     table.insert(bookmarks, { filename = filename, bufnr = bufnr, lnum = lnum })
@@ -109,10 +118,8 @@ function M.add(bufnr, lnum)
     vim.api.nvim_exec_autocmds("User", { pattern = "BookmarkAdded" })
 end
 
----@param bufnr integer
----@param lnum number
----@return nil
 function M.delete(bufnr, lnum)
+-- ...
     local filename = vim.api.nvim_buf_get_name(bufnr)
     for i = #bookmarks, 1, -1 do
         local b = bookmarks[i]

@@ -164,4 +164,8 @@ function M.reset()
     M._git_branch = "main"
 end
 
+function M.clear_written_files()
+    M._written_files = {}
+end
+
 return M

@@ -17,39 +17,41 @@ end
 ---@param bufnr integer
 function M.bookmarks_to_extmarks(bufnr)
     bookmark.update_bufnr()
-    extmark.clear_buffer(bufnr)
+    extmark.clear_all(bufnr)
 
     local bookmarks = bookmark.list()
+    local filename = vim.api.nvim_buf_get_name(bufnr)
     for _, b in ipairs(bookmarks) do
-        if b.bufnr == bufnr then
-            extmark.add(b.bufnr, b.lnum)
+        if b.filename == filename then
+            local id = extmark.add(bufnr, b.lnum)
+            bookmark.update_extmark_id(filename, b.lnum, id)
         end
     end
 end
 
 ---@param bufnr integer
 function M.extmarks_to_bookmarks(bufnr)
-    local changes = extmark.get_position_changes(bufnr)
+    local bs = bookmark.list()
+    local filename = vim.api.nvim_buf_get_name(bufnr)
+    local changed = false
 
-    for old_lnum, new_lnum in pairs(changes) do
-        -- bookmarkの行番号を更新
-        local bs = bookmark.list()
-        for index, b in ipairs(bs) do
-            if b.bufnr == bufnr and b.lnum == old_lnum then
-                bs[index].lnum = new_lnum
+    for _, b in ipairs(bs) do
+        if b.filename == filename and b.extmark_id then
+            local new_lnum = extmark.get_lnum(bufnr, b.extmark_id)
+            if new_lnum and new_lnum ~= b.lnum then
+                local old_lnum = b.lnum
+                b.lnum = new_lnum
+                changed = true
+
+                -- signも更新
+                sign.delete(bufnr, old_lnum)
+                sign.add(bufnr, new_lnum)
             end
         end
-        bookmark.update_all(bs)
-
-        -- extmarkの内部管理も更新
-        extmark.update_lnum(bufnr, old_lnum, new_lnum)
-
-        -- signも更新
-        sign.delete(bufnr, old_lnum)
-        sign.add(bufnr, new_lnum)
     end
 
-    if next(changes) then
+    if changed then
+        bookmark.update_all(bs)
         require("bookmarks.persist").backup()
     end
 end
