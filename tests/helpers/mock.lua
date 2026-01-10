@@ -18,6 +18,13 @@ function M.setup_vim_api()
     -- Stub nvim_buf_get_name
     M._stubs.nvim_buf_get_name = stub(vim.api, "nvim_buf_get_name")
     M._stubs.nvim_buf_get_name.invokes(function(bufnr)
+        if bufnr == 0 then
+            -- Try to get current bufnr if nvim_get_current_buf is available
+            local success, current = pcall(vim.api.nvim_get_current_buf)
+            if success then
+                bufnr = current
+            end
+        end
         return M._buf_names[bufnr] or ("/test/file_" .. bufnr .. ".lua")
     end)
 end

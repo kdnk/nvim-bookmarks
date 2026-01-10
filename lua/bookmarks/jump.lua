@@ -2,109 +2,55 @@ local bookmark = require("bookmarks.bookmark")
 
 local M = {}
 
-local index = 1
-
----@param opts { reverse: boolean }
----@return integer
-local function move_index(opts)
-    local bookmarks = bookmark.list()
-    if not opts.reverse then
-        index = index + 1
-        if #bookmarks < index then
-            index = 1
-        end
-    else
-        index = index - 1
-        if index <= 0 then
-            index = #bookmarks
-        end
-    end
-    return index
-end
-
-local function jump_cursor(opts)
-    index = bookmark.sanitize(index, function()
-        if not opts.reverse then
-            index = #bookmark.list() < index and 1 or index
-        else
-            index = move_index(opts)
-        end
-        return index
-    end)
-    if index == -1 then return end
-
-    local bookmarks = bookmark.list()
-    local b = bookmarks[index]
-    if not b then return end
-
-    vim.api.nvim_set_current_buf(b.bufnr)
-    local win_id = vim.api.nvim_get_current_win()
-    vim.api.nvim_win_set_cursor(win_id, { b.lnum, 0 })
-end
-
----@param filename string
----@param lnum integer
----@return { prev: integer, next: integer }
-local function get_neighboring_bookmarks(filename, lnum)
-    local bookmarks = bookmark.list()
-
-    local prev = -1
-    local next = -1
-
-    for i, b in ipairs(bookmarks) do
-        if b.filename == filename then
-            if b.lnum < lnum then
-                prev = i
-            elseif b.lnum > lnum and next == -1 then
-                next = i
-            end
-        end
-    end
-
-    return { prev = prev, next = next }
-end
-
----@param opts { reverse: boolean }
----@return boolean
-local function jump_line_within_file(opts)
-    local current_filename = vim.api.nvim_buf_get_name(0)
-    local current_lnum = vim.api.nvim_win_get_cursor(0)[1]
-
-    local neighbors = get_neighboring_bookmarks(current_filename, current_lnum)
-    if not opts.reverse and 0 < neighbors.next then
-        index = neighbors.next
-        jump_cursor(opts)
-        return true
-    elseif opts.reverse and 0 < neighbors.prev then
-        index = neighbors.prev
-        jump_cursor(opts)
-        return true
-    end
-    return false
-end
-
 ---@param opts { reverse: boolean }
 function M.jump(opts)
-    local bookmarks = bookmark.list()
-    if #bookmarks == 0 then
+    local bs = bookmark.list()
+    if #bs == 0 then
         return
     end
 
-    local jumped = jump_line_within_file(opts)
-    if jumped then
-        return
+    local curr_file = vim.api.nvim_buf_get_name(0)
+    local curr_lnum = vim.api.nvim_win_get_cursor(0)[1]
+
+    local target_index = -1
+
+    if not opts.reverse then
+        -- Forward: find first bookmark after current position
+        for i, b in ipairs(bs) do
+            if b.filename > curr_file or (b.filename == curr_file and b.lnum > curr_lnum) then
+                target_index = i
+                break
+            end
+        end
+        -- Wrap around to the first bookmark if none found after current position
+        if target_index == -1 then
+            target_index = 1
+        end
+    else
+        -- Backward: find first bookmark before current position
+        for i = #bs, 1, -1 do
+            local b = bs[i]
+            if b.filename < curr_file or (b.filename == curr_file and b.lnum < curr_lnum) then
+                target_index = i
+                break
+            end
+        end
+        -- Wrap around to the last bookmark if none found before current position
+        if target_index == -1 then
+            target_index = #bs
+        end
     end
 
-    move_index(opts)
-    jump_cursor(opts)
+    local b = bs[target_index]
+    if b then
+        vim.api.nvim_set_current_buf(b.bufnr)
+        local win_id = vim.api.nvim_get_current_win()
+        vim.api.nvim_win_set_cursor(win_id, { b.lnum, 0 })
+    end
 end
 
-function M.reset_index()
-    index = 1
-end
-
-function M.get_index()
-    return index
-end
+-- These are kept for backward compatibility with init.lua and tests
+function M.reset_index() end
+function M.get_index() return 1 end
 
 return M

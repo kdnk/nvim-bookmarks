@@ -238,34 +238,4 @@ describe("navigation workflow (integration)", function()
             assert.are.equal(positions[1], cursor_position[1])
         end)
     end)
-
-    describe("index management", function()
-        it("should maintain index across jumps", function()
-            mock.set_buf_name(1, "/test/file1.lua")
-            bookmark.add(1, 10)
-            bookmark.add(1, 20)
-            bookmark.add(1, 30)
-
-            local initial_index = jump.get_index()
-            assert.are.equal(1, initial_index)
-
-            bm.jump_next()
-            local after_jump = jump.get_index()
-
-            -- Index should have changed
-            assert.are_not.equal(initial_index, after_jump)
-        end)
-
-        it("should allow index reset", function()
-            mock.set_buf_name(1, "/test/file1.lua")
-            bookmark.add(1, 10)
-            bookmark.add(1, 20)
-
-            bm.jump_next()
-            bm.jump_next()
-
-            jump.reset_index()
-            assert.are.equal(1, jump.get_index())
-        end)
-    end)
 end)

@@ -82,6 +82,7 @@ function M.list()
     end
 
     local new_bookmarks = {}
+    table.sort(filenames)
     for _, filename in ipairs(filenames) do
         local bs = grouped[filename]
         table.sort(bs, function(a, b)
