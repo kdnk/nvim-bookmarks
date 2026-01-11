@@ -126,11 +126,7 @@ describe("config", function()
 
             assert
                 .stub(vim.notify)
-                .was_called_with(
-                    match.matches("%[nvim%-bookmarks%] .*must be a boolean"),
-                    vim.log.levels.WARN,
-                    { force = true }
-                )
+                .was_called_with(match.matches("%[nvim%-bookmarks%] .*must be a boolean"), vim.log.levels.WARN, { force = true })
         end)
 
         it("should warn and use default on invalid string type", function()
@@ -144,11 +140,7 @@ describe("config", function()
 
             assert
                 .stub(vim.notify)
-                .was_called_with(
-                    match.matches("%[nvim%-bookmarks%] .*must be a string"),
-                    vim.log.levels.WARN,
-                    { force = true }
-                )
+                .was_called_with(match.matches("%[nvim%-bookmarks%] .*must be a string"), vim.log.levels.WARN, { force = true })
         end)
     end)
 end)
