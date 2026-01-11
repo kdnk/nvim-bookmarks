@@ -22,18 +22,18 @@ describe("lualine", function()
     end)
 
     describe("bookmark_count", function()
-        it("should return formatted string with 5 characters width when total is 0", function()
+        it("should return formatted string with 7 bytes width when total is 0", function()
             -- Mock bookmark.list to return empty list
             bookmark.list = function()
                 return {}
             end
 
             local result = lualine.bookmark_count()
-            assert.is.equal("    0", result)
-            assert.is.equal(5, #result)
+            assert.is.equal("⚑ 0/0", result)
+            assert.is.equal(7, #result)
         end)
 
-        it("should return formatted string with 5 characters width when total > 0 and no jump index", function()
+        it("should return formatted string with 7 bytes width when total > 0 and no jump index", function()
             bookmark.list = function()
                 return { {}, {} }
             end -- 2 bookmarks
@@ -42,11 +42,11 @@ describe("lualine", function()
             end
 
             local result = lualine.bookmark_count()
-            assert.is.equal("  -/2", result)
-            assert.is.equal(5, #result)
+            assert.is.equal("⚑ -/2", result)
+            assert.is.equal(7, #result)
         end)
 
-        it("should return formatted string with 5 characters width when total > 0 and has jump index", function()
+        it("should return formatted string with 7 bytes width when total > 0 and has jump index", function()
             bookmark.list = function()
                 return { {}, {} }
             end -- 2 bookmarks
@@ -55,11 +55,11 @@ describe("lualine", function()
             end
 
             local result = lualine.bookmark_count()
-            assert.is.equal("  1/2", result)
-            assert.is.equal(5, #result)
+            assert.is.equal("⚑ 1/2", result)
+            assert.is.equal(7, #result)
         end)
 
-        it("should return formatted string with 5 characters width when result is already 5 chars", function()
+        it("should return formatted string when result exceeds 7 bytes", function()
             bookmark.list = function()
                 local list = {}
                 for i = 1, 10 do
@@ -72,8 +72,8 @@ describe("lualine", function()
             end
 
             local result = lualine.bookmark_count()
-            assert.is.equal(" 1/10", result)
-            assert.is.equal(5, #result)
+            assert.is.equal("⚑ 1/10", result)
+            assert.is.equal(8, #result)
         end)
     end)
 end)
