@@ -172,6 +172,7 @@ end
 function M.remove_all()
     bookmarks = {}
     cached_list = nil
+    vim.api.nvim_exec_autocmds("User", { pattern = "BookmarkDeleted" })
 end
 
 function M.to_json()
